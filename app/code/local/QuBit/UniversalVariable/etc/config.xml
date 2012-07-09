@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+  <config>
+     <modules>
+        <QuBit_UniversalVariable>
+          <version>1.0.0</version>
+        </QuBit_UniversalVariable>
+     </modules>
+
+     <global>
+       <models>
+            <universal_variable_product>
+                <class>QuBit_UniversalVariable_Model_Product</class>
+            </universal_variable_product>
+            <universal_variable_page>
+                <class>QuBit_UniversalVariable_Model_Page</class>
+            </universal_variable_page>
+       </models>
+       <events>
+        <!-- EVENT: Product -->
+        <catalog_controller_product_view>
+          <observers>
+            <QuBit_UniversalVariable_Model_Product_Observer>
+              <type>singleton</type>
+              <class>universal_variable_product/observer</class>
+              <method>generate_universal_variable</method>
+            </QuBit_UniversalVariable_Model_Product_Observer>
+          </observers>
+        </catalog_controller_product_view>
+
+        <!-- EVENT: User and Page-->
+        <controller_action_layout_load_before>
+          <observers>
+            <QuBit_UniversalVariable_Model_Page_Observer>
+              <type>singleton</type>
+              <class>universal_variable_page/observer</class>
+              <method>outputUniversalVariable</method>
+            </QuBit_UniversalVariable_Model_Page_Observer>
+          </observers>
+        </controller_action_layout_load_before>
+       </events>
+       <blocks>
+          <universal_variable_block>
+            <class>QuBit_UniversalVariable_Block_Uv</class>
+          </universal_variable_block>
+        </blocks>
+     </global>
+
+     <frontend>
+       <routers>
+          <routeurfrontend>
+              <use>standard</use>
+              <args>
+                 <module>QuBit_UniversalVariable</module>
+                 <frontName>universal_variable</frontName>
+              </args>
+           </routeurfrontend>
+       </routers>
+
+       <!-- Layout -->
+       <layout>
+        <updates>
+          <qubit_universal_variable>
+            <file>qubit/universal_variable.xml</file>
+          </qubit_universal_variable>
+        </updates>
+       </layout>
+    </frontend>
+</config>

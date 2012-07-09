@@ -1,0 +1,11 @@
+<?php 
+  $version = Mage::getSingleton('universal_variable/observer')->getVersion();
+  $product_model = Mage::getSingleton('universal_variable/observer')->getProductModel();
+?>
+
+<!-- Universal Variable Product -->
+<script type="text/javascript">
+  window.universal_variable = window.universal_variable || {};
+  window.version = <?php echo $version ?>
+  window.universal_variable.product = <?php echo json_encode($product_model) ?>;
+</script>
