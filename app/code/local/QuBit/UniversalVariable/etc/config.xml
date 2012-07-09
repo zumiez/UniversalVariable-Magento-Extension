@@ -8,32 +8,18 @@
 
      <global>
        <models>
-            <universal_variable_product>
-                <class>QuBit_UniversalVariable_Model_Product</class>
-            </universal_variable_product>
             <universal_variable_page>
                 <class>QuBit_UniversalVariable_Model_Page</class>
             </universal_variable_page>
        </models>
        <events>
-        <!-- EVENT: Product -->
-        <catalog_controller_product_view>
-          <observers>
-            <QuBit_UniversalVariable_Model_Product_Observer>
-              <type>singleton</type>
-              <class>universal_variable_product/observer</class>
-              <method>generate_universal_variable</method>
-            </QuBit_UniversalVariable_Model_Product_Observer>
-          </observers>
-        </catalog_controller_product_view>
-
-        <!-- EVENT: User and Page-->
+        <!-- EVENT: Page-->
         <controller_action_layout_load_before>
           <observers>
             <QuBit_UniversalVariable_Model_Page_Observer>
               <type>singleton</type>
               <class>universal_variable_page/observer</class>
-              <method>outputUniversalVariable</method>
+              <method>setUniversalVariable</method>
             </QuBit_UniversalVariable_Model_Page_Observer>
           </observers>
         </controller_action_layout_load_before>

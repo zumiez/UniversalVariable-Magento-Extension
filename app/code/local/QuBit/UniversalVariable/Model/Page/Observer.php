@@ -3,9 +3,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   protected $_version     = "1.0.0";
   protected $_user        = null;
+  protected $_product     = null;
   protected $_basket      = null;
-  protected $_transction  = null;
   protected $_search      = null;
+  protected $_transction  = null;
 
   /*
   * Returns Controller Name
@@ -60,7 +61,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $cart = array();
   }
 
-  public function getProductModel() {
+  public function setProductModel($product) {
     $product_model = array();
     $product_model['id'] = $product->getId();
     $product_model['sku_code'] = $product->getSku();
@@ -77,7 +78,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   }
 
-  public function outputUniversalVariable($observer) {
+  public function setUniversalVariable($observer) {
     $name = $this->_getControllerName();
     // product
     // cart
