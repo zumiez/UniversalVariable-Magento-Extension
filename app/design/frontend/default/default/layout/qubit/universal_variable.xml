@@ -2,10 +2,7 @@
 <layout version="0.1.0">
     <default>
       <reference name="head">
-        <block type="core/template" name="universal_variable" as="universal_variable" template="qubit/universal_variable/universal_variable.phtml"/>
+        <block type="core/template" name="universal_variable" as="universal_variable" template="qubit/universal_variable.phtml"/>
       </reference>
-<!--         <reference name="before_body_end">
-            <block type="core/template" name="mixpanel-brandid" as="mixpanel-brandid" template="arush/mixpanel/scripts.phtml"/>
-        </reference> -->
     </default>
 </layout>

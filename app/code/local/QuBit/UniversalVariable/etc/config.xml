@@ -8,9 +8,9 @@
 
      <global>
        <models>
-            <universal_variable_page>
+            <universal_variable_main>
                 <class>QuBit_UniversalVariable_Model_Page</class>
-            </universal_variable_page>
+            </universal_variable_main>
        </models>
        <events>
         <!-- EVENT: Page-->
@@ -18,7 +18,7 @@
           <observers>
             <QuBit_UniversalVariable_Model_Page_Observer>
               <type>singleton</type>
-              <class>universal_variable_page/observer</class>
+              <class>universal_variable_main/observer</class>
               <method>setUniversalVariable</method>
             </QuBit_UniversalVariable_Model_Page_Observer>
           </observers>
