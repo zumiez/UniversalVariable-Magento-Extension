@@ -7,14 +7,30 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   protected $_basket      = null;
   protected $_product     = null;
   protected $_search      = null;
-  protected $_transction  = null;
+  protected $_transaction = null;
+  protected $_listing     = null;
+
+  protected function _getRequest() {
+    return Mage::app()->getFrontController()->getRequest();
+  }
 
   /*
   * Returns Controller Name
   */
   protected function _getControllerName() {
-    $request = Mage::app()->getFrontController()->getRequest();
-    return $request->getControllerName();
+    return $this->_getRequest()->getControllerName();
+  }
+
+  protected function _getActionName() {
+    return $this->_getRequest()->getActionName();
+  }
+
+  protected function _getModuleName() {
+    return $this->_getRequest()->getModuleName();
+  }
+
+  protected function _getRouteName() {
+    return $this->_getRequest()->getRouteName();
   }
 
   /*
@@ -24,7 +40,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $layout = Mage::app()->getLayout();
     $block = $layout->createBlock('QuBit_UniversalVariable_Block_Uv','universal_variable_block');
   }
-
 
   /*
    * Sets user information
@@ -43,12 +58,50 @@ class QuBit_UniversalVariable_Model_Page_Observer {
    */
   public function _setPage() {
     $this->_page = array();
-    $this->_page['category'] = $this->_getControllerName();
+    $this->_page['category'] = $this->_getModuleName().'/'.$this->_getControllerName().'/'.$this->_getActionName();
   }
 
+  public function _getAddress($address) {
+    $billing = array();
+    $billing['name'] = $address->getName();
+    $billing['address'] = $address->getStreetFull();
+    $billing['city'] = $address->getCity();
+    // TODO: $billing['state']
+    $billing['postcode'] = $address->getPostcode();
+    $billing['country'] = $address->getCountry();
+    return $billing;
+  }
 
   public function _setTranscation() {
-    // return $this->_getControllerName() == 'confirmation';
+    // default controllerName is "onepage"
+    if ($this->_getModuleName() =="checkout" && $this->_getActionName() == "success") {
+      $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+      if ($orderId) {
+        $transaction = array();
+        $order = Mage::getModel('sales/order')->load($orderId);
+        $items = $order->getAllItems();
+        $line_items = $this->_getInvoicedLineItems($items);
+        $shippingId = $order->getShippingAddress()->getId();
+        $address = Mage::getModel('sales/order_address')->load($shippingId);
+        $billingAddress = $order->getBillingAddress();
+        $shippingAddress = $order->getShippingAddress();
+
+        $transaction['order_id'] = $orderId;
+        $transaction['currency'] = $this->_getCurrency();
+        $transaction['subtotal'] = $order->getSubtotal();
+        // TODO: subtotal_include_tax
+        $transaction['total'] = $order->getGrandTotal();
+        $transaction['voucher'] = $order->getCouponCode();
+        // TODO: voucher_discount
+        $transaction['tax'] = $order->getTax();
+        $transaction['shipping_cost'] = $order->getShippingAmount();
+        $transaction['shipping_method'] = $order->getShippingMethod();
+        $transaction['billing'] = $this->_getAddress($billingAddress);
+        $transaction['delivery'] = $this->_getAddress($shippingAddress);
+        $transaction['line_items'] = $line_items;
+        $this->_transaction = $transaction;
+      }
+    }
   }
 
   public function _setProduct() {
@@ -80,26 +133,55 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $product_model;
   }
 
+  public function _getLineItems($items) {
+    $line_items = array();
+    foreach($items as $item) {
+      $litem_model = array();
+      $litem_model['product'] = $this->_getProductModel($item->getProduct());
+      $litem_model['quantity'] = $item->getQty();
+      $litem_model['subtotal'] = $item->getCalculationPrice() * $item -> getQty();
+      array_push($line_items, $litem_model);
+    }
+    return $line_items;
+  }
+
+
+  public function _getInvoicedLineItems($items) {
+    $line_items = array();
+    foreach($items as $item) {
+      $litem_model = array();
+      $litem_model['product'] = $this->_getProductModel($item->getProduct());
+      $litem_model['quantity'] = $item->getQtyToInvoice();
+      $litem_model['subtotal'] = $item->getPrice();
+      array_push($line_items, $litem_model);
+    }
+    return $line_items;
+  }
+
+  public function _setListing() {
+    // $collection = $this->getLoadedProductCollection();
+    // foreach ( $collection as $product ) {
+    //   echo "----------------";
+    //   // echo $product->getName();
+    // }
+    $queryText = Mage::helper('catalogSearch')->getQueryText();
+    $collection = Mage::getResourceModel('catalogsearch/query_collection');
+    echo $queryText;
+    echo $collection->count();
+  }
+
   /*
    * Sets basket information
    */
   public function _setBasket() {
     $cart = Mage::getSingleton('checkout/cart');
     $quote = $cart->getQuote();
-    $line_items = array();
     $basket = array();
     $items = $quote->getAllItems();
     $subTotal = $quote->getSubtotal();
     $grandTotal = $quote->getGrandTotal();
-
-    foreach($items as $item) {
-      $litem_model = array();
-      $litem_model['product'] = $this->_getProductModel($item->getProduct());
-      $litem_model['quantity'] = $item->getQty();
-      // is this correct?
-      $litem_model['subtotal'] = $item->getCalculationPrice() * $item->getQty();
-      array_push($line_items, $litem_model);
-    }
+    $line_items = $this->_getLineItems($items);
+    
     $basket['id'] = Mage::getSingleton('checkout/session')->getQuoteId();
     $basket['currency'] = $this->_getCurrency();
     $basket['subtotal'] = $subTotal;
@@ -116,18 +198,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $this->_setUser();
     $this->_setPage();
     $this->_setProduct();
+    $this->_setListing();
     $this->_setBasket();
-
-    // product
-    // cart
-    // index
-    // result
-    // $user_model = json_encode($this->_getUser());
-    // <script type="text/javascript">
-    //   window.universal_variable = window.universal_variable || {};
-    //   window.universal_variable.version = "1.0.0";
-    //   window.universal_variable.user = {$user_model};
-    //   console.log("{$name}")</script>
+    $this->_setTranscation();
     $this->_createBlock();
 
     return $this;
@@ -155,11 +228,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
   public function getTransaction() {
-    return null;
+    return $this->_transaction;
   }
 
   public function getListing() {
-    return null;
+    return $_listing;
   }
 }
 ?>
