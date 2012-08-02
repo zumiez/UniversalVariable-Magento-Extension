@@ -1,6 +1,22 @@
 <?php
+  $qubit_opentag_container_id               = Mage::getStoreConfig('qubit/qubit_opentag_container_id');
+  $qubit_opentag_async                      = Mage::getStoreConfig('qubit/qubit_opentag_async');
+  $qubit_opentag_enabled                    = Mage::getStoreConfig('qubit/qubit_opentag_enabled');
+  $qubit_universal_variable_enabled         = Mage::getStoreConfig('qubit/qubit_universal_variable_enabled');
+
   $observer = 'universal_variable_main/observer';
   $mage = Mage::getSingleton($observer);
+
+  if ($qubit_opentag_async == 1) {
+  	$qubit_opentag_async = 'async defer';
+  } else {
+  	$qubit_opentag_async = '';
+  };
+?>
+
+<?php if ($qubit_universal_variable_enabled == 1):?>
+<?php
+  // extract variable only when universal variable is enabled 
   $version     = $mage->getVersion();
   $page        = $mage->getPage();
   $user        = $mage->getUser();
@@ -8,15 +24,7 @@
   $basket      = $mage->getBasket();
   $listing     = $mage->getListing();
   $transaction = $mage->getTransaction();
-  $qubit_id    = Mage::getStoreConfig('qubit/qubit_id');
-  $qubit_async = Mage::getStoreConfig('qubit/qubit_async');
-  if($qubit_async == 1) {
-  	$qubit_async = 'async defer';
-  }else{
-  	$qubit_async = '';
-  };
 ?>
-
 <!-- Universal Variable Start -->
 <script type="text/javascript">
   window.universal_variable = window.universal_variable || {};
@@ -37,6 +45,11 @@
   <?php endif ?>
 </script>
 <!-- Universal Variable End -->
-<?php if($qubit_id):?>
-<script src='//d3c3cq33003psk.cloudfront.net/opentag-<?php echo $qubit_id;?>.js' <?php echo $qubit_async;?>></script>
+<?php endif;?>
+
+<?php if ($qubit_opentag_container_id && $qubit_opentag_enabled == 1):?>
+<!-- QuBit OpenTag Start -->
+<script type="text/javascript" src='//d3c3cq33003psk.cloudfront.net/opentag-<?php echo $qubit_opentag_container_id;?>.js' <?php echo $qubit_opentag_async;?>></script>
+<!-- QuBit OpenTag End -->
+
 <?php endif;?>

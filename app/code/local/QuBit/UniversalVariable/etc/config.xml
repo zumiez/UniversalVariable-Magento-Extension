@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <config>
-     <modules>
-        <QuBit_UniversalVariable>
-          <version>1.0.0</version>
-        </QuBit_UniversalVariable>
-     </modules>
+    <modules>
+      <QuBit_UniversalVariable>
+        <version>1.0.0</version>
+      </QuBit_UniversalVariable>
+    </modules>
 
      <global>
        <models>
@@ -50,7 +50,7 @@
        <layout>
         <updates>
           <qubit_universal_variable>
-            <file>universal_variable.xml</file>
+            <file>qubit/universal_variable.xml</file>
           </qubit_universal_variable>
         </updates>
        </layout>
@@ -74,20 +74,35 @@
 							</children>							
 						</QuBit_UniversalVariable>
 						<system>
-                            <children>
-                                <config>
-                                    <children>
-                                        <QuBit_UniversalVariable translate="title" module="QuBit_UniversalVariable">
-                                            <sort_order>0</sort_order> 
-                                            <title>Manage QuBit Script</title>
-                                        </QuBit_UniversalVariable>
-                                    </children>
-                                </config>
-                            </children>
-                        </system>
+              <children>
+                <config>
+                  <children>
+                    <QuBit_UniversalVariable translate="title" module="QuBit_UniversalVariable">
+                        <sort_order>0</sort_order> 
+                        <title>Manage QuBit Script</title>
+                    </QuBit_UniversalVariable>
+                  </children>
+                </config>
+              </children>
+            </system>
 					</children>
 				</admin>                
             </resources>
         </acl>
     </adminhtml>
+
+
+    <!-- Admin Configuration Default Values -->
+    <default>
+<!--         <QuBit_UniversalVariable>
+          <QuBit_UniversalVariable_Settings>
+            <QuBit_OpenTag_Async>1</QuBit_OpenTag_Async>
+          </QuBit_UniversalVariable_Settings>
+        </QuBit_UniversalVariable> -->
+      <qubit>
+        <qubit_opentag_async>1</qubit_opentag_async>
+        <qubit_opentag_enabled>1</qubit_opentag_enabled>
+        <qubit_universal_variable_enabled>1</qubit_universal_variable_enabled>
+      </qubit>
+    </default>
 </config>

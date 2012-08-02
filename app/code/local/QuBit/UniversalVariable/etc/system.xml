@@ -2,13 +2,14 @@
 <config>
 	<tabs>
         <QuBit_tab translate="label">
-            <label>QuBit Open Tag</label>
+            <label>Universal Variable</label>
             <sort_order>100</sort_order>
         </QuBit_tab>
     </tabs>
+
     <sections>
         <QuBit_UniversalVariable translate="label">
-            <label>OpenTag Configuration</label>
+            <label>Configuration</label>
             <tab>QuBit_tab</tab>
             <frontend_type>text</frontend_type> 
             <sort_order>2</sort_order>
@@ -16,38 +17,73 @@
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
             <groups>
-            	<QuBit_UniversalVariable translate="label">
-                    <label>OpenTag Configuration setup</label>
+                <QuBit_UniversalVariable_Settings translate="label">
+                    <label>Universal Variable Configuration</label>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <fields>
-                        <QuBit_id translate="label">
-                            <label>Container ID</label>
-                            <frontend_type>text</frontend_type>
-                            <config_path>qubit/qubit_id</config_path>
-                            <comment><![CDATA[Put the ID of your container format of 1111-11111]]></comment>                        
+                        <QuBit_UniversalVariable_Enabled translate="label">
+                            <label>Enable Universal Variable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>qubit/qubit_universal_variable_enabled</config_path>                   
                             <sort_order>1</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </QuBit_id>
+                        </QuBit_UniversalVariable_Enabled>
+                    </fields>
+                </QuBit_UniversalVariable_Settings>
+
+            	<QuBit_OpenTag_Settings translate="label">
+                    <label>QuBit OpenTag Configuration</label>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <QuBit_OpenTag_Container translate="label">
+                            <label>Container ID</label>
+                            <frontend_type>text</frontend_type>
+                            <config_path>qubit/qubit_opentag_container_id</config_path>
+                            <comment><![CDATA[ Click 'Embed' button in OpenTag interface for the container you'd like to implement.<br/>
+Your container ID should look like 1234-56789, for example: <br/>
+&lt;script src="//d3c3cq33003psk.cloudfront.net/opentag-<strong>1234-56789</strong>.js" async defer&gt;&lt;/script&gt; ]]></comment>                        
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </QuBit_OpenTag_Container>
                         
-                        <QuBit_setting translate="label">
-                            <label>Set script as async</label>
+                        <QuBit_OpenTag_Async translate="label">
+                            <label>Asynchronous</label>
                             <frontend_type>select</frontend_type>
                             <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <config_path>qubit/qubit_async</config_path>
-                            <comment><![CDATA[If yes=async and no=sync]]></comment>                        
+                            <config_path>qubit/qubit_opentag_async</config_path>
+                            <comment><![CDATA[ Asynchronous is recommended. ]]></comment>                        
                             <sort_order>2</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
-                        </QuBit_setting>
+                        </QuBit_OpenTag_Async>
+
+                        <QuBit_OpenTag_Enabled translate="label">
+                            <label>Enable OpenTag</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <config_path>qubit/qubit_opentag_enabled</config_path>                   
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </QuBit_OpenTag_Enabled>
                     </fields>
-            	</QuBit_UniversalVariable>
-            </groups>
+            	   </QuBit_OpenTag_Settings>
+
+
+                </groups>
         </QuBit_UniversalVariable>
     </sections>
 </config>
