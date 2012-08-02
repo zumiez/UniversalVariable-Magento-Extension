@@ -88,13 +88,13 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
         $transaction['order_id'] = $orderId;
         $transaction['currency'] = $this->_getCurrency();
-        $transaction['subtotal'] = $order->getSubtotal();
+        $transaction['subtotal'] = (float) $order->getSubtotal();
         // TODO: subtotal_include_tax
-        $transaction['total'] = $order->getGrandTotal();
+        $transaction['total'] = (float) $order->getGrandTotal();
         $transaction['voucher'] = $order->getCouponCode();
         // TODO: voucher_discount
-        $transaction['tax'] = $order->getTax();
-        $transaction['shipping_cost'] = $order->getShippingAmount();
+        $transaction['tax'] = (float) $order->getTax();
+        $transaction['shipping_cost'] = (float) $order->getShippingAmount();
         $transaction['shipping_method'] = $order->getShippingMethod();
         $transaction['billing'] = $this->_getAddress($billingAddress);
         $transaction['delivery'] = $this->_getAddress($shippingAddress);
@@ -125,8 +125,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $product_model['sku_code'] = $product->getSku();
     $product_model['url']      = $product->getProductUrl();
     $product_model['name']     = $product->getName();
-    $product_model['unit_price']      = $product->getPrice();
-    $product_model['unit_sale_price'] = $product->getFinalPrice();
+    $product_model['unit_price']      = (float) $product->getPrice();
+    $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
     $product_model['currency']        = $this->_getCurrency();
     $product_model['description']     = $product->getDescription();
     $product_model['stock']           = $this->_getProuctStock($product);
@@ -152,7 +152,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $litem_model = array();
       $litem_model['product'] = $this->_getProductModel($item->getProduct());
       $litem_model['quantity'] = $item->getQtyToInvoice();
-      $litem_model['subtotal'] = $item->getPrice();
+      $litem_model['subtotal'] = (float) $item->getPrice();
       array_push($line_items, $litem_model);
     }
     return $line_items;
@@ -175,12 +175,12 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     
     $basket['id'] = Mage::getSingleton('checkout/session')->getQuoteId();
     $basket['currency'] = $this->_getCurrency();
-    $basket['subtotal'] = $subTotal;
+    $basket['subtotal'] = (float) $subTotal;
     // TODO: subtotal_incluce_tax
     // TODO: tax
     // TODO: shipping_cost
     // TODO: shipping_method
-    $basket['total'] = $grandTotal;
+    $basket['total'] = (float) $grandTotal;
     $basket['line_items'] = $line_items;
     $this->_basket = $basket;
   }
