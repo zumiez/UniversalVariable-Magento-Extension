@@ -159,15 +159,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
   public function _setListing() {
-    // // $collection = $this->getLoadedProductCollection();
-    // // foreach ( $collection as $product ) {
-    // //   echo "----------------";
-    // //   // echo $product->getName();
-    // // }
-    // $queryText = Mage::helper('catalogSearch')->getQueryText();
-    // $collection = Mage::getResourceModel('catalogsearch/query_collection');
-    // echo $queryText;
-    // echo $collection->count();
   }
 
   /*

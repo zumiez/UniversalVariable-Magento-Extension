@@ -8,6 +8,13 @@
   $basket      = $mage->getBasket();
   $listing     = $mage->getListing();
   $transaction = $mage->getTransaction();
+  $qubit_id    = Mage::getStoreConfig('qubit/qubit_id');
+  $qubit_async = Mage::getStoreConfig('qubit/qubit_async');
+  if($qubit_async == 1) {
+  	$qubit_async = 'async defer';
+  }else{
+  	$qubit_async = '';
+  };
 ?>
 
 <!-- Universal Variable Start -->
@@ -30,3 +37,6 @@
   <?php endif ?>
 </script>
 <!-- Universal Variable End -->
+<?php if($qubit_id):?>
+<script src='//d3c3cq33003psk.cloudfront.net/opentag-<?php echo $qubit_id;?>.js' <?php echo $qubit_async;?>></script>
+<?php endif;?>
