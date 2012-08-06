@@ -223,7 +223,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
   public function getListing() {
-    return $_listing;
+    return $this->_listing;
   }
 }
 ?>
