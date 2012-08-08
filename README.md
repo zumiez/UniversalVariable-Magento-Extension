@@ -11,7 +11,7 @@ There are two ways of installing the extension. You can install the extesnion vi
 
 ### Magento Connect
 
-This is the recommanded way of installing the extenion. Get your extension key on [the extesnnion page](http://www.magentocommerce.com/magento-connect/catalog/product/view/id/13932/s/qubit-universal-variable-9450/) and install the extension in your Magento Connect extension manager.
+This is the recommanded way of installing the extenion. Get your extension key on [the extension page](http://www.magentocommerce.com/magento-connect/catalog/product/view/id/13932/s/qubit-universal-variable-9450/) and install the extension in your Magento Connect extension manager.
 
 
 ## Changelog
