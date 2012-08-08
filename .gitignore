@@ -34,4 +34,5 @@
 !app/design/frontend/default/default/template/qubit/*/*/*
 
 !README.md
+!LICENSE.txt
 *.DS_Store
