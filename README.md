@@ -1,1 +1,25 @@
 # Magento Extension for Universal Variable
+
+QuBit's Universal Variable streamlines the process of passing values between OpenTag and your pages, whilst future-proofing against updates and changes. We recommend creating the relevant JavaScript object on your page prior to deploying OpenTag's container script. Doing this will assure that all values will be present on the page when the script runs and can be used by libraried OpenTag scripts. You only need to declare the object variables you use. For example, if your pages only have category and no subcategory, just declare the category. Likewise, if you feel the need to extend objects, or feel like renaming them, please do so. However, please take a note of the new variable names, as these are needed to access your scripts in your OpenTag container.
+
+## Universal Variable Specification
+Exported JavaScript object under `universal_variable` on all pages follows open standarded universal variable specification. The specificaiton is also available on GitHub:
+[http://github.com/QuBitProducts/UniversalVariable](http://github.com/QuBitProducts/UniversalVariable)
+
+## Installation
+There are two ways of installing the extension. You can install the extesnion via Magento Connect or manually install the extension by copying files to Magento system directory. Installing from Magento Connect is strongly recommanded, which means you are able to notification when an update is available.
+
+### Magento Connect
+
+This is the recommanded way of installing the extenion. Get your extension key on [the extesnnion page](http://www.magentocommerce.com/magento-connect/catalog/product/view/id/13932/s/qubit-universal-variable-9450/) and install the extension in your Magento Connect extension manager.
+
+
+## Changelog
+
+### 1.0.1
+* parse price into float data type
+
+### 1.0.0
+* inital release
+* allow system output universal variables
+* configure OpenTag script through configuration panel
