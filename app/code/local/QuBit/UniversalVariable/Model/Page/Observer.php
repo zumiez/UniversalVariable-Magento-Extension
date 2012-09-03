@@ -86,7 +86,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $billingAddress = $order->getBillingAddress();
         $shippingAddress = $order->getShippingAddress();
 
-        $transaction['order_id'] = $orderId;
+        $transaction['order_id'] = $order->getIncrementId();
         $transaction['currency'] = $this->_getCurrency();
         $transaction['subtotal'] = (float) $order->getSubtotal();
         // TODO: subtotal_include_tax
