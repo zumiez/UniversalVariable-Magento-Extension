@@ -136,11 +136,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _getLineItems($items) {
     $line_items = array();
     foreach($items as $item) {
-      $litem_model = array();
-      $litem_model['product'] = $this->_getProductModel($item->getProduct());
-      $litem_model['quantity'] = $item->getQty();
-      $litem_model['subtotal'] = $item->getCalculationPrice() * $item -> getQty();
-      array_push($line_items, $litem_model);
+      $product = $item->getProduct();
+      if ($product->isVisibleInSiteVisibility()) {
+        $litem_model = array();
+        $litem_model['product'] = $this->_getProductModel($product);
+        $litem_model['quantity'] = $item->getQty();
+        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+        array_push($line_items, $litem_model);
+      }
     }
     return $line_items;
   }
@@ -149,11 +152,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _getInvoicedLineItems($items) {
     $line_items = array();
     foreach($items as $item) {
-      $litem_model = array();
-      $litem_model['product'] = $this->_getProductModel($item->getProduct());
-      $litem_model['quantity'] = $item->getQtyToInvoice();
-      $litem_model['subtotal'] = (float) $item->getPrice();
-      array_push($line_items, $litem_model);
+      $product = $item->getProduct();
+      if ($product->isVisibleInSiteVisibility()) {
+        $litem_model = array();
+        $litem_model['product'] = $this->_getProductModel($product);
+        $litem_model['quantity'] = $item->getQtyToInvoice();
+        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+        array_push($line_items, $litem_model);
+      }
     }
     return $line_items;
   }
