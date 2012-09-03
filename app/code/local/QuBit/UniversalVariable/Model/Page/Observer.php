@@ -148,7 +148,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $line_items;
   }
 
-
   public function _getInvoicedLineItems($items) {
     $line_items = array();
     foreach($items as $item) {

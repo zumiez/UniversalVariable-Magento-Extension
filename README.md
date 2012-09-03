@@ -21,6 +21,10 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+### 1.0.2
+* ignore invisible products in basket and order
+* calcuate the correct order prices for configurable products
+
 ### 1.0.1
 * parse price into float data type
 
