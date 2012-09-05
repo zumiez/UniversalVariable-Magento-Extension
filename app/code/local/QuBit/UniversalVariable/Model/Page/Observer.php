@@ -155,7 +155,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       if ($product->isVisibleInSiteVisibility()) {
         $litem_model = array();
         $litem_model['product'] = $this->_getProductModel($product);
-        $litem_model['quantity'] = $item->getQtyToInvoice();
+        $litem_model['quantity'] = (float) $item->getQtyOrdered();
         $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
         array_push($line_items, $litem_model);
       }
