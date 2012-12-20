@@ -74,7 +74,12 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _setTranscation() {
     // default controllerName is "onepage"
-    if ($this->_getModuleName() =="checkout" && $this->_getActionName() == "success") {
+    // relax the check, only check if contains checkout
+    // somecheckout systems has different prefix/postfix,
+    // but all contains checkout
+    $isCheckout = strpos($this->_getModuleName(), 'checkout') !== false;
+
+    if ($isCheckout && $this->_getActionName() == "success") {
       $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
       if ($orderId) {
         $transaction = array();
