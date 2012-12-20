@@ -21,6 +21,10 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+
+### 1.0.4
+* handle more transaction pages provided by other checkout systems
+
 ### 1.0.3
 * fixed issue with failed to load Data.php file
 
