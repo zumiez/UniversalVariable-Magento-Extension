@@ -63,12 +63,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _getAddress($address) {
     $billing = array();
-    $billing['name'] = $address->getName();
-    $billing['address'] = $address->getStreetFull();
-    $billing['city'] = $address->getCity();
+    if ($address) {
+      $billing['name']     = $address->getName();
+      $billing['address']  = $address->getStreetFull();
+      $billing['city']     = $address->getCity();
+      $billing['postcode'] = $address->getPostcode();
+      $billing['country']  = $address->getCountry();
+    }
     // TODO: $billing['state']
-    $billing['postcode'] = $address->getPostcode();
-    $billing['country'] = $address->getCountry();
     return $billing;
   }
 
@@ -85,26 +87,24 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $transaction = array();
         $order = Mage::getModel('sales/order')->load($orderId);
         $items = $order->getAllItems();
-        $line_items = $this->_getInvoicedLineItems($items);
-        $shippingId = $order->getShippingAddress()->getId();
-        $address = Mage::getModel('sales/order_address')->load($shippingId);
-        $billingAddress = $order->getBillingAddress();
+        $line_items      = $this->_getInvoicedLineItems($items);
         $shippingAddress = $order->getShippingAddress();
+        $billingAddress  = $order->getBillingAddress();
 
-        $transaction['order_id'] = $order->getIncrementId();
-        $transaction['currency'] = $this->_getCurrency();
-        $transaction['subtotal'] = (float) $order->getSubtotal();
+        $transaction['order_id']        = $order->getIncrementId();
+        $transaction['currency']        = $this->_getCurrency();
+        $transaction['subtotal']        = (float) $order->getSubtotal();
         // TODO: subtotal_include_tax
-        $transaction['total'] = (float) $order->getGrandTotal();
-        $transaction['voucher'] = $order->getCouponCode();
+        $transaction['total']           = (float) $order->getGrandTotal();
+        $transaction['voucher']         = $order->getCouponCode();
         // TODO: voucher_discount
-        $transaction['tax'] = (float) $order->getTax();
-        $transaction['shipping_cost'] = (float) $order->getShippingAmount();
+        $transaction['tax']             = (float) $order->getTax();
+        $transaction['shipping_cost']   = (float) $order->getShippingAmount();
         $transaction['shipping_method'] = $order->getShippingMethod();
-        $transaction['billing'] = $this->_getAddress($billingAddress);
-        $transaction['delivery'] = $this->_getAddress($shippingAddress);
-        $transaction['line_items'] = $line_items;
-        $this->_transaction = $transaction;
+        $transaction['billing']         = $this->_getAddress($billingAddress);
+        $transaction['delivery']        = $this->_getAddress($shippingAddress);
+        $transaction['line_items']      = $line_items;
+        $this->_transaction             = $transaction;
       }
     }
   }
