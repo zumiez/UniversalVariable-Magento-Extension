@@ -241,5 +241,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function getListing() {
     return $this->_listing;
   }
+
+  public function getMageVersion() {
+    return Mage::getVersion();
+  }
 }
 ?>

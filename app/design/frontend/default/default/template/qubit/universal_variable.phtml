@@ -17,18 +17,20 @@
 <?php if ($qubit_universal_variable_enabled == 1):?>
 <?php
   // extract variable only when universal variable is enabled 
-  $version     = $mage->getVersion();
-  $page        = $mage->getPage();
-  $user        = $mage->getUser();
-  $product     = $mage->getProduct();
-  $basket      = $mage->getBasket();
-  $listing     = $mage->getListing();
-  $transaction = $mage->getTransaction();
+  $version         = $mage->getVersion();
+  $page            = $mage->getPage();
+  $user            = $mage->getUser();
+  $product         = $mage->getProduct();
+  $basket          = $mage->getBasket();
+  $listing         = $mage->getListing();
+  $transaction     = $mage->getTransaction();
+  $magento_version = $mage->getMageVersion();
 ?>
 <!-- Universal Variable Start -->
 <script type="text/javascript">
   window.universal_variable = window.universal_variable || {};
-  window.universal_variable.version      = <?php echo json_encode($version) ?>;
+  window.universal_variable.version           = <?php echo json_encode($version) ?>;
+  window.universal_variable.magento_version   = <?php echo json_encode($magento_version) ?>;
   window.universal_variable.page         = <?php echo json_encode($page)    ?>;
   window.universal_variable.user         = <?php echo json_encode($user)    ?>;
   <?php if ($product) : ?>
