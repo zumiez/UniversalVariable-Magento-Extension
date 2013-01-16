@@ -21,6 +21,14 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+### 1.0.7
+* Added total_discount for a `line_item` in basket and transaction; it's useful to calculate average product cost when complicated sales discount rule applied.
+
+### 1.0.6
+* address get product details compatibility issue; output system version in universal variable for diagnosing. 
+
+### 1.0.5
+* verbosely check shipping and billing address, some systems does not have such value 
 
 ### 1.0.4
 * handle more transaction pages provided by other checkout systems
