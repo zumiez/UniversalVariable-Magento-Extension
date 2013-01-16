@@ -147,9 +147,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
       if ($product && $product->isVisibleInSiteVisibility()) {
         $litem_model = array();
-        $litem_model['product'] = $this->_getProductModel($product);
-        $litem_model['quantity'] = $item->getQty();
-        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+        $litem_model['product']        = $this->_getProductModel($product);
+        $litem_model['quantity']       = $item->getQty();
+        $litem_model['subtotal']       = (float) $item->getRowTotalInclTax();
+        $litem_model['total_discount'] = (float) $item->getDiscountAmount();
         array_push($line_items, $litem_model);
       }
     }
@@ -165,9 +166,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       
       if ($product && $product->isVisibleInSiteVisibility()) {
         $litem_model = array();
-        $litem_model['product'] = $this->_getProductModel($product);
-        $litem_model['quantity'] = (float) $item->getQtyOrdered();
-        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+        $litem_model['product']        = $this->_getProductModel($product);
+        $litem_model['quantity']       = (float) $item->getQtyOrdered();
+        $litem_model['subtotal']       = (float) $item->getRowTotalInclTax();
+        $litem_model['total_discount'] = (float) $item->getDiscountAmount();
         array_push($line_items, $litem_model);
       }
     }
