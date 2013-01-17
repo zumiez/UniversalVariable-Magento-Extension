@@ -1,7 +1,7 @@
 <?php 
 class QuBit_UniversalVariable_Model_Page_Observer {
 
-  protected $_version     = "1.0.0";
+  protected $_version     = "1.1.1";
   protected $_user        = null;
   protected $_page        = null;
   protected $_basket      = null;
@@ -41,199 +41,343 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $block = $layout->createBlock('QuBit_UniversalVariable_Block_Uv','universal_variable_block');
   }
 
-  /*
-   * Sets user information
-   */
-  public function _setUser() {
-    $user = Mage::helper('customer')->getCustomer();
-    $this->_user = array();
-    $this->_user['email'] = $user->getEmail();
-    $this->_user['id'] = $user->getEntityId();
-    $this->_user['returning'] = $this->_user['id'] ? true : false;
-    $this->_user['language'] = Mage::app()->getLocale()->getDefaultLocale();
-  }
 
   /*
-   * Sets current page information
+  * Determine which page type we're on
+  */
+
+    public function _isHome() {
+      if (Mage::app()->getRequest()->getRequestString() == "/") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isContent() {
+      if ($this->_getModuleName() == 'cms') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isCategory() {
+      if (Mage::registry('current_category')) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isSearch() {
+      if ($this->_getModuleName() == 'catalogsearch') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isProduct() {
+      $onCatalog = false;
+      if(Mage::registry('current_product')) {
+          $onCatalog = true;
+      }
+      return $onCatalog;
+    }
+
+    public function _isBasket() {
+      $request = $this->_getRequest();
+      $module = $request->getModuleName();
+      $controller = $request->getControllerName();
+      $action = $request->getActionName();
+      if ($module == 'checkout' && $controller == 'cart' && $action == 'index'){
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isCheckout() {
+      if (strpos($this->_getModuleName(), 'checkout') !== false && $this->_getActionName() != 'success') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    public function _isConfirmation() {
+      // default controllerName is "onepage"
+      // relax the check, only check if contains checkout
+      // somecheckout systems has different prefix/postfix,
+      // but all contains checkout
+      if (strpos($this->_getModuleName(), 'checkout') !== false && $this->_getActionName() == "success") {
+        return true; 
+      } else {
+        return false;
+      }
+    }
+
+
+  /*
+   * Get information on pages to pass to front end
    */
-  public function _setPage() {
-    $this->_page = array();
-    $this->_page['category'] = $this->_getModuleName().'/'.$this->_getControllerName().'/'.$this->_getActionName();
-  }
 
-  public function _getAddress($address) {
-    $billing = array();
-    $billing['name'] = $address->getName();
-    $billing['address'] = $address->getStreetFull();
-    $billing['city'] = $address->getCity();
-    // TODO: $billing['state']
-    $billing['postcode'] = $address->getPostcode();
-    $billing['country'] = $address->getCountry();
-    return $billing;
-  }
+    public function getVersion() {
+      return $this->_version;
+    }
 
-  public function _setTranscation() {
-    // default controllerName is "onepage"
-    // relax the check, only check if contains checkout
-    // somecheckout systems has different prefix/postfix,
-    // but all contains checkout
-    $isCheckout = strpos($this->_getModuleName(), 'checkout') !== false;
+    public function getUser() {
+      return $this->_user;
+    }
 
-    if ($isCheckout && $this->_getActionName() == "success") {
+    public function getPage() {
+      return $this->_page;
+    }
+
+    public function getProduct() {
+      return $this->_product;
+    }
+
+    public function getBasket() {
+      return $this->_basket;
+    }
+
+    public function getTransaction() {
+      return $this->_transaction;
+    }
+
+    public function getListing() {
+      return $this->_listing;
+    }
+
+
+  /*
+   * Set the model attributes to be passed front end
+   */
+
+    public function _getPage() {
+      if ($this->_isHome()) {
+        return 'home';
+      } elseif ($this->_isContent()) {
+        return 'content';
+      } elseif ($this->_isCategory()) {
+        return 'category';
+      } elseif ($this->_isSearch()) {
+        return 'search';
+      } elseif ($this->_isProduct()) {
+        return 'product';
+      } elseif ($this->_isBasket()) {
+        return 'basket';
+      } elseif ($this->_isCheckout()) {
+        return 'checkout';
+      } elseif ($this->_isConfirmation()) {
+        return 'confirmation';
+      } else {
+        return $this->_getModuleName();
+      }
+    }
+
+    public function _setPage() {
+      $this->_page = array();
+      $this->_page['category'] = $this->_getPage();
+    }
+
+    // Set the user info 
+    public function _setUser() {
+      $user = Mage::helper('customer')->getCustomer();
+      $this->_user = array();
+      $email = $user->getEmail();
+      if ($email) $this->_user['email'] = $email;
+      $user_id = $user->getEntityId();
+      if ($user_id) $this->_user['user_id'] = $user_id;
+      $this->_user['returning'] = $this->_user['id'] ? true : false;
+      // Buggy - doesn't update
+      //$this->_user['language'] = Mage::app()->getLocale()->getLocaleCode();
+    }
+
+    public function _getAddress($address) {
+      $billing = array();
+      $billing['name'] = $address->getName();
+      $billing['address'] = $address->getStreetFull();
+      $billing['city'] = $address->getCity();
+      // TODO: $billing['state']
+      $billing['postcode'] = $address->getPostcode();
+      $billing['country'] = $address->getCountry();
+      return $billing;
+    }
+
+    public function _getProuctStock($product) {
+      return (int) Mage::getModel('cataloginventory/stock_item')->loadByProduct($product)->getQty();
+    }
+
+    public function _getCurrency() {
+      return Mage::app()->getStore()->getCurrentCurrencyCode();
+    }
+
+    public function _getProductModel($product) {
+      $product_model = array();
+      $product_model['id']       = $product->getId();
+      $product_model['sku_code'] = $product->getSku();
+      $product_model['url']      = $product->getProductUrl();
+      $product_model['name']     = $product->getName();
+      $product_model['unit_price']      = (float) $product->getPrice();
+      $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
+      $product_model['currency']        = $this->_getCurrency();
+      $product_model['description']     = $product->getShortDescription();
+      $product_model['stock']           = $this->_getProuctStock($product);
+      $product_model['category']        = $this->_getProductCategories($product);
+      return $product_model;
+    }
+
+    public function _getProductCategories($product) {
+      $cats = $product->getCategoryIds();
+      if ($cats) {
+        $category_names = array();
+        foreach ($cats as $category_id) {
+          $_cat = Mage::getModel('catalog/category')->load($category_id) ;
+          $category_names[] = $_cat->getName();
+        } 
+        if (is_array($category_names) and !empty($category_names)) {
+          return implode(', ', $category_names);
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    public function _getLineItems($items) {
+      $line_items = array();
+      foreach($items as $item) {
+        $product = $item->getProduct();
+        if ($product->isVisibleInSiteVisibility()) {
+          $litem_model = array();
+          $litem_model['product'] = $this->_getProductModel($product);
+          $litem_model['quantity'] = (float) $item->getQtyOrdered();
+          $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+          array_push($line_items, $litem_model);
+        }
+      }
+      return $line_items;
+    }
+
+    public function _setListing() {
+      $this->_listing = array();
+      if ($this->_isCategory()) {
+        $category = Mage::registry('current_category');
+      } elseif ($this->_isSearch()) {
+        $category = Mage::getSingleton('catalogsearch/advanced');
+        if (isset($_GET['q'])) $this->_listing['query'] = $_GET['q'];
+      } 
+      $collection = $category->getProductCollection();
+      $products = array();
+      foreach ($collection as $item) {
+        $product = new Mage_Catalog_Model_Product();
+        $product = $product->load($item->getId());
+        $products[] = $this->_getProductModel($product);
+      }
+      $this->_listing['items'] = $products;
+    }
+
+    public function _setProduct() {
+      $product  = Mage::registry('current_product');
+      if (!$product) return false;
+      $this->_product = $this->_getProductModel($product);
+    }
+
+    public function _setBasket() {
+      // Get from different model depending on page 
+      if ($this->_isBasket()) {
+        $cart = Mage::getSingleton('checkout/cart');
+      } elseif ($this->_isCheckout()) {
+        $cart = Mage::getSingleton('checkout/session');
+      }
+
+      $basket = array();
+      $quote = $cart->getQuote();
+
+      // Set normal params
+      $basket_id = Mage::getSingleton('checkout/session')->getQuoteId();
+      if ($basket_id) $basket['id'] = $basket_id;
+      $basket['currency'] = $this->_getCurrency();
+      $basket['subtotal'] = (float) $quote->getSubtotal();
+      $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote);
+      $basket['tax'] = (float) $quote->getTax();
+      // Removed as not really applicable to the normal magento setup
+      //$basket['shipping_cost'] = (float) $quote->getShippingAmount();
+      //$basket['shipping_method'] = $quote->getShippingMethod();
+      $basket['total'] = (float) $quote->getGrandTotal();
+
+      // Line items
+      $items = $quote->getAllItems();
+      $line_items = $this->_getLineItems($items);
+      $basket['line_items'] = $line_items;
+
+      $this->_basket = $basket;
+    }
+
+    public function _doesSubtotalIncludeTax($order) {
+      /* Conditions:
+          - if tax is zero, then set to false
+          - Assume that if grand total is bigger than total after subtracting shipping, then subtotal does NOT include tax
+      */
+      $grandTotalWithoutShipping = $order->getGrandTotal() - $order->getShippingAmount();
+      if ($order->getTax() == 0 || $grandTotalWithoutShipping > $order->getSubtotal()) {
+        return false;
+      } {
+        return true;
+      }
+    }
+
+    public function _setTranscation() {
       $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
       if ($orderId) {
         $transaction = array();
         $order = Mage::getModel('sales/order')->load($orderId);
-        $items = $order->getAllItems();
-        $line_items = $this->_getInvoicedLineItems($items);
-        $shippingId = $order->getShippingAddress()->getId();
-        $address = Mage::getModel('sales/order_address')->load($shippingId);
-        $billingAddress = $order->getBillingAddress();
-        $shippingAddress = $order->getShippingAddress();
 
+        // Get general details
         $transaction['order_id'] = $order->getIncrementId();
         $transaction['currency'] = $this->_getCurrency();
         $transaction['subtotal'] = (float) $order->getSubtotal();
-        // TODO: subtotal_include_tax
+        $transaction['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($order);
+        $transaction['payment_type'] = $order->getPayment()->getMethodInstance()->getTitle();
         $transaction['total'] = (float) $order->getGrandTotal();
         $transaction['voucher'] = $order->getCouponCode();
         // TODO: voucher_discount
         $transaction['tax'] = (float) $order->getTax();
         $transaction['shipping_cost'] = (float) $order->getShippingAmount();
         $transaction['shipping_method'] = $order->getShippingMethod();
+
+        // Get addresses
+        $shippingId = $order->getShippingAddress()->getId();
+        $address = Mage::getModel('sales/order_address')->load($shippingId);
+        $billingAddress = $order->getBillingAddress();
+        $shippingAddress = $order->getShippingAddress();
         $transaction['billing'] = $this->_getAddress($billingAddress);
         $transaction['delivery'] = $this->_getAddress($shippingAddress);
+
+        // Get items
+        $items = $order->getAllItems();
+        $line_items = $this->_getLineItems($items);
         $transaction['line_items'] = $line_items;
+        
         $this->_transaction = $transaction;
       }
     }
-  }
 
-  public function _setProduct() {
-    $product  = Mage::registry('current_product');
-    if ($product) {
-      $this->_product = $this->_getProductModel($product);;
+    public function setUniversalVariable($observer) {
+      $this->_setUser();
+      $this->_setPage();
+      if ($this->_isProduct()) $this->_setProduct();
+      if ($this->_isCategory()) $this->_setListing();
+      if ($this->_isCategory() || $this->_isSearch()) $this->_setListing();
+      if ($this->_isBasket() || $this->_isCheckout()) $this->_setBasket();
+      if ($this->_isConfirmation()) $this->_setTranscation();
+      $this->_createBlock();
+      return $this;
     }
-  }
 
-  public function _getProuctStock($product) {
-    return (int) Mage::getModel('cataloginventory/stock_item')->loadByProduct($product)->getQty();
-  }
-
-  public function _getCurrency() {
-    return Mage::app()->getStore()->getCurrentCurrencyCode();
-  }
-
-  public function _getProductModel($product) {
-    $product_model = array();
-    $product_model['id']       = $product->getId();
-    $product_model['sku_code'] = $product->getSku();
-    $product_model['url']      = $product->getProductUrl();
-    $product_model['name']     = $product->getName();
-    $product_model['unit_price']      = (float) $product->getPrice();
-    $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
-    $product_model['currency']        = $this->_getCurrency();
-    $product_model['description']     = $product->getDescription();
-    $product_model['stock']           = $this->_getProuctStock($product);
-    return $product_model;
-  }
-
-  public function _getLineItems($items) {
-    $line_items = array();
-    foreach($items as $item) {
-      $product = $item->getProduct();
-      if ($product->isVisibleInSiteVisibility()) {
-        $litem_model = array();
-        $litem_model['product'] = $this->_getProductModel($product);
-        $litem_model['quantity'] = $item->getQty();
-        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
-        array_push($line_items, $litem_model);
-      }
-    }
-    return $line_items;
-  }
-
-  public function _getInvoicedLineItems($items) {
-    $line_items = array();
-    foreach($items as $item) {
-      $product = $item->getProduct();
-      if ($product->isVisibleInSiteVisibility()) {
-        $litem_model = array();
-        $litem_model['product'] = $this->_getProductModel($product);
-        $litem_model['quantity'] = (float) $item->getQtyOrdered();
-        $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
-        array_push($line_items, $litem_model);
-      }
-    }
-    return $line_items;
-  }
-
-  public function _setListing() {
-  }
-
-  /*
-   * Sets basket information
-   */
-  public function _setBasket() {
-    $cart = Mage::getSingleton('checkout/cart');
-    $quote = $cart->getQuote();
-    $basket = array();
-    $items = $quote->getAllItems();
-    $subTotal = $quote->getSubtotal();
-    $grandTotal = $quote->getGrandTotal();
-    $line_items = $this->_getLineItems($items);
-    
-    $basket['id'] = Mage::getSingleton('checkout/session')->getQuoteId();
-    $basket['currency'] = $this->_getCurrency();
-    $basket['subtotal'] = (float) $subTotal;
-    // TODO: subtotal_incluce_tax
-    // TODO: tax
-    // TODO: shipping_cost
-    // TODO: shipping_method
-    $basket['total'] = (float) $grandTotal;
-    $basket['line_items'] = $line_items;
-    $this->_basket = $basket;
-  }
-
-  public function setUniversalVariable($observer) {
-    $this->_setUser();
-    $this->_setPage();
-    $this->_setProduct();
-    $this->_setListing();
-    $this->_setBasket();
-    $this->_setTranscation();
-    $this->_createBlock();
-
-    return $this;
-  }
-
-
-  public function getVersion() {
-    return $this->_version;
-  }
-
-  public function getUser() {
-    return $this->_user;
-  }
-
-  public function getPage() {
-    return $this->_page;
-  }
-
-  public function getProduct() {
-    return $this->_product;
-  }
-
-  public function getBasket() {
-    return $this->_basket;
-  }
-
-  public function getTransaction() {
-    return $this->_transaction;
-  }
-
-  public function getListing() {
-    return $this->_listing;
-  }
 }
 ?>
