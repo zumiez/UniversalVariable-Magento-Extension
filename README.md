@@ -21,6 +21,10 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+### 1.0.8
+* Now supports all page types. New types added: listing, checkout, basket
+* More variables added 
+
 ### 1.0.7
 * Added total_discount for a `line_item` in basket and transaction; it's useful to calculate average product cost when complicated sales discount rule applied.
 
