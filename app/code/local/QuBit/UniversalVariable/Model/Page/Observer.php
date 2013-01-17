@@ -1,4 +1,5 @@
 <?php 
+
 class QuBit_UniversalVariable_Model_Page_Observer {
 
   protected $_version     = "1.1.1";
@@ -32,6 +33,47 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   protected function _getRouteName() {
     return $this->_getRequest()->getRouteName();
   }
+
+  protected function _getCustomer() {
+    return Mage::helper('customer')->getCustomer();
+  }
+
+  protected function _getCategory($category_id) {
+    return Mage::getModel('catalog/category')->load($category_id);
+  }
+
+  protected function _getCurrentProduct() {
+    return Mage::registry('current_product');
+  }
+
+  protected function _getProduct($productId) {
+    return Mage::getModel('catalog/product')->load($productId);
+  }
+
+  protected function _getCurrentCategory() {
+    return Mage::registry('current_category');
+  }
+
+  protected function _getCatalogSearch() {
+    return Mage::getSingleton('catalogsearch/advanced');
+  }
+
+  protected function _getCheckoutCart() {
+    return Mage::getSingleton('checkout/cart');
+  }
+
+  protected function _getCheckoutSession() {
+    return Mage::getSingleton('checkout/session');
+  }
+
+  protected function _getSalesOrder() {
+    return Mage::getModel('sales/order');
+  }
+
+  protected function _getOrderAddress() {
+    return Mage::getModel('sales/order_address');
+  }
+  
 
   /*
    * Creates  Block View
@@ -151,6 +193,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       return $this->_listing;
     }
 
+    public function getMageVersion() {
+      return Mage::getVersion();
+    }
+
 
   /*
    * Set the model attributes to be passed front end
@@ -185,7 +231,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
     // Set the user info 
     public function _setUser() {
-      $user = Mage::helper('customer')->getCustomer();
+      $user = $this->_getCustomer();
       $this->_user = array();
       $email = $user->getEmail();
       if ($email) $this->_user['email'] = $email;
@@ -230,12 +276,13 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       return $product_model;
     }
 
+
     public function _getProductCategories($product) {
       $cats = $product->getCategoryIds();
       if ($cats) {
         $category_names = array();
         foreach ($cats as $category_id) {
-          $_cat = Mage::getModel('catalog/category')->load($category_id) ;
+          $_cat = $this->_getCategory($category_id);
           $category_names[] = $_cat->getName();
         } 
         if (is_array($category_names) and !empty($category_names)) {
@@ -248,10 +295,16 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       }
     }
 
+
     public function _getLineItems($items) {
       $line_items = array();
       foreach($items as $item) {
-        $product = $item->getProduct();
+        // $product = $item->getProduct();
+        // backwards compaibility, getProduct() is not supported in older version
+
+        $productId = $item->getProductId();
+        $product = $this->_getProduct($productId);
+       
         if ($product->isVisibleInSiteVisibility()) {
           $litem_model = array();
           $litem_model['product'] = $this->_getProductModel($product);
@@ -266,9 +319,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     public function _setListing() {
       $this->_listing = array();
       if ($this->_isCategory()) {
-        $category = Mage::registry('current_category');
+        $category = $this->_getCurrentCategory();
       } elseif ($this->_isSearch()) {
-        $category = Mage::getSingleton('catalogsearch/advanced');
+        $category = $this->_getCatalogSearch();
         if (isset($_GET['q'])) $this->_listing['query'] = $_GET['q'];
       } 
       $collection = $category->getProductCollection();
@@ -282,7 +335,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
 
     public function _setProduct() {
-      $product  = Mage::registry('current_product');
+      $product  = $this->_getCurrentProduct();
       if (!$product) return false;
       $this->_product = $this->_getProductModel($product);
     }
@@ -290,16 +343,16 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     public function _setBasket() {
       // Get from different model depending on page 
       if ($this->_isBasket()) {
-        $cart = Mage::getSingleton('checkout/cart');
+        $cart = $this->_getCheckoutCart();
       } elseif ($this->_isCheckout()) {
-        $cart = Mage::getSingleton('checkout/session');
+        $cart = $this->_getCheckoutSession();
       }
 
       $basket = array();
       $quote = $cart->getQuote();
 
       // Set normal params
-      $basket_id = Mage::getSingleton('checkout/session')->getQuoteId();
+      $basket_id = $this->_getCheckoutSession()->getQuoteId();
       if ($basket_id) $basket['id'] = $basket_id;
       $basket['currency'] = $this->_getCurrency();
       $basket['subtotal'] = (float) $quote->getSubtotal();
@@ -312,8 +365,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
       // Line items
       $items = $quote->getAllItems();
-      $line_items = $this->_getLineItems($items);
-      $basket['line_items'] = $line_items;
+      $basket['line_items'] = $this->_getLineItems($items);
 
       $this->_basket = $basket;
     }
@@ -332,10 +384,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
 
     public function _setTranscation() {
-      $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+      $orderId = $this->_getCheckoutSession()->getLastOrderId();
       if ($orderId) {
         $transaction = array();
-        $order = Mage::getModel('sales/order')->load($orderId);
+        $order = $this->_getSalesOrder()->load($orderId);
 
         // Get general details
         $transaction['order_id'] = $order->getIncrementId();
@@ -352,7 +404,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
         // Get addresses
         $shippingId = $order->getShippingAddress()->getId();
-        $address = Mage::getModel('sales/order_address')->load($shippingId);
+        $address = $this->_getOrderAddress()->load($shippingId);
         $billingAddress = $order->getBillingAddress();
         $shippingAddress = $order->getShippingAddress();
         $transaction['billing'] = $this->_getAddress($billingAddress);
@@ -378,6 +430,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $this->_createBlock();
       return $this;
     }
+
 
 }
 ?>
