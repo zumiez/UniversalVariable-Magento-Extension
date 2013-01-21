@@ -366,10 +366,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $basket['subtotal']             = (float) $quote->getSubtotal();
     $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote);
     $basket['tax']                  = (float) $quote->getTax();
-    // Removed as not really applicable to the normal magento setup
-    //$basket['shipping_cost']   = (float) $quote->getShippingAmount();
-    //$basket['shipping_method'] = $quote->getShippingMethod();
-    $basket['total'] = (float) $quote->getGrandTotal();
+    $basket['shipping_cost']        = (float) $quote->getShippingAmount();
+    $basket['shipping_method']      = $quote->getShippingMethod();
+    $basket['total']                = (float) $quote->getGrandTotal();
 
     // Line items
     $items = $quote->getAllItems();
@@ -450,7 +449,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     if ($this->_isConfirmation()) { 
       $this->_setTranscation();
     }
-    
+
     $this->_createBlock();
     return $this;
   }
