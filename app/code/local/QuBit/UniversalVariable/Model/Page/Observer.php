@@ -303,11 +303,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       // backwards compaibility, getProduct() is not supported in older version
 
       $productId = $item->getProductId();
-      $product = $this->_getProduct($productId);
+      $product   = $this->_getProduct($productId);
      
       if ($product->isVisibleInSiteVisibility()) {
-        $litem_model = array();
-        $litem_model['product'] = $this->_getProductModel($product);
+        $litem_model             = array();
+        $litem_model['product']  = $this->_getProductModel($product);
         $litem_model['quantity'] = (float) $item->getQtyOrdered();
         $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
         array_push($line_items, $litem_model);
@@ -320,16 +320,22 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $this->_listing = array();
     if ($this->_isCategory()) {
       $category = $this->_getCurrentCategory();
+
     } elseif ($this->_isSearch()) {
       $category = $this->_getCatalogSearch();
-      if (isset($_GET['q'])) $this->_listing['query'] = $_GET['q'];
+      if (isset($_GET['q'])) { 
+        $this->_listing['query'] = $_GET['q'];
+      }
     } 
     $collection = $category->getProductCollection();
     $products = array();
     foreach ($collection as $item) {
-      $product = new Mage_Catalog_Model_Product();
-      $product = $product->load($item->getId());
-      $products[] = $this->_getProductModel($product);
+      $productId  = $item->getId();
+      $product    = $this->_getProduct($productId);
+      // only expose visible product
+      if ($product->isVisibleInSiteVisibility()) {
+        array_push($products, $this->_getProductModel($product));
+      }
     }
     $this->_listing['items'] = $products;
   }
@@ -353,13 +359,15 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
     // Set normal params
     $basket_id = $this->_getCheckoutSession()->getQuoteId();
-    if ($basket_id) $basket['id'] = $basket_id;
-    $basket['currency'] = $this->_getCurrency();
-    $basket['subtotal'] = (float) $quote->getSubtotal();
+    if ($basket_id) { 
+      $basket['id'] = $basket_id;
+    }
+    $basket['currency']             = $this->_getCurrency();
+    $basket['subtotal']             = (float) $quote->getSubtotal();
     $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote);
-    $basket['tax'] = (float) $quote->getTax();
+    $basket['tax']                  = (float) $quote->getTax();
     // Removed as not really applicable to the normal magento setup
-    //$basket['shipping_cost'] = (float) $quote->getShippingAmount();
+    //$basket['shipping_cost']   = (float) $quote->getShippingAmount();
     //$basket['shipping_method'] = $quote->getShippingMethod();
     $basket['total'] = (float) $quote->getGrandTotal();
 
@@ -387,32 +395,32 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $orderId = $this->_getCheckoutSession()->getLastOrderId();
     if ($orderId) {
       $transaction = array();
-      $order = $this->_getSalesOrder()->load($orderId);
+      $order       = $this->_getSalesOrder()->load($orderId);
 
       // Get general details
-      $transaction['order_id'] = $order->getIncrementId();
-      $transaction['currency'] = $this->_getCurrency();
-      $transaction['subtotal'] = (float) $order->getSubtotal();
+      $transaction['order_id']             = $order->getIncrementId();
+      $transaction['currency']             = $this->_getCurrency();
+      $transaction['subtotal']             = (float) $order->getSubtotal();
       $transaction['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($order);
-      $transaction['payment_type'] = $order->getPayment()->getMethodInstance()->getTitle();
-      $transaction['total'] = (float) $order->getGrandTotal();
-      $transaction['voucher'] = $order->getCouponCode();
+      $transaction['payment_type']         = $order->getPayment()->getMethodInstance()->getTitle();
+      $transaction['total']                = (float) $order->getGrandTotal();
+      $transaction['voucher']              = $order->getCouponCode();
       // TODO: voucher_discount
-      $transaction['tax'] = (float) $order->getTax();
-      $transaction['shipping_cost'] = (float) $order->getShippingAmount();
+      $transaction['tax']             = (float) $order->getTax();
+      $transaction['shipping_cost']   = (float) $order->getShippingAmount();
       $transaction['shipping_method'] = $order->getShippingMethod();
 
       // Get addresses
-      $shippingId = $order->getShippingAddress()->getId();
-      $address = $this->_getOrderAddress()->load($shippingId);
-      $billingAddress = $order->getBillingAddress();
-      $shippingAddress = $order->getShippingAddress();
-      $transaction['billing'] = $this->_getAddress($billingAddress);
+      $shippingId        = $order->getShippingAddress()->getId();
+      $address           = $this->_getOrderAddress()->load($shippingId);
+      $billingAddress    = $order->getBillingAddress();
+      $shippingAddress   = $order->getShippingAddress();
+      $transaction['billing']  = $this->_getAddress($billingAddress);
       $transaction['delivery'] = $this->_getAddress($shippingAddress);
 
       // Get items
-      $items = $order->getAllItems();
-      $line_items = $this->_getLineItems($items);
+      $items                     = $order->getAllItems();
+      $line_items                = $this->_getLineItems($items);
       $transaction['line_items'] = $line_items;
       
       $this->_transaction = $transaction;
@@ -422,11 +430,27 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function setUniversalVariable($observer) {
     $this->_setUser();
     $this->_setPage();
-    if ($this->_isProduct()) $this->_setProduct();
-    if ($this->_isCategory()) $this->_setListing();
-    if ($this->_isCategory() || $this->_isSearch()) $this->_setListing();
-    if ($this->_isBasket() || $this->_isCheckout()) $this->_setBasket();
-    if ($this->_isConfirmation()) $this->_setTranscation();
+
+    if ($this->_isProduct()) {
+      $this->_setProduct();
+    }
+
+    if ($this->_isCategory()) {
+      $this->_setListing();
+    }
+
+    if ($this->_isCategory() || $this->_isSearch()) {
+      $this->_setListing();
+    }
+
+    if ($this->_isBasket() || $this->_isCheckout()) {
+      $this->_setBasket();
+    }
+
+    if ($this->_isConfirmation()) { 
+      $this->_setTranscation();
+    }
+    
     $this->_createBlock();
     return $this;
   }
