@@ -244,12 +244,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _getAddress($address) {
     $billing = array();
-    $billing['name'] = $address->getName();
-    $billing['address'] = $address->getStreetFull();
-    $billing['city'] = $address->getCity();
+    if ($address) {
+      $billing['name']     = $address->getName();
+      $billing['address']  = $address->getStreetFull();
+      $billing['city']     = $address->getCity();
+      $billing['postcode'] = $address->getPostcode();
+      $billing['country']  = $address->getCountry();
+    }
     // TODO: $billing['state']
-    $billing['postcode'] = $address->getPostcode();
-    $billing['country'] = $address->getCountry();
     return $billing;
   }
 
@@ -276,7 +278,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $product_model;
   }
 
-
   public function _getProductCategories($product) {
     $cats = $product->getCategoryIds();
     if ($cats) {
@@ -299,17 +300,15 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _getLineItems($items) {
     $line_items = array();
     foreach($items as $item) {
-      // $product = $item->getProduct();
-      // backwards compaibility, getProduct() is not supported in older version
-
       $productId = $item->getProductId();
       $product   = $this->_getProduct($productId);
-     
+      // product needs to be visible
       if ($product->isVisibleInSiteVisibility()) {
         $litem_model             = array();
         $litem_model['product']  = $this->_getProductModel($product);
         $litem_model['quantity'] = (float) $item->getQtyOrdered();
         $litem_model['subtotal'] = (float) $item->getRowTotalInclTax();
+        $litem_model['total_discount'] = (float) $item->getDiscountAmount();
         array_push($line_items, $litem_model);
       }
     }
@@ -453,7 +452,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $this->_createBlock();
     return $this;
   }
-
 
 }
 ?>
