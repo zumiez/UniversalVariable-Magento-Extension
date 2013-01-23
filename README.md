@@ -21,6 +21,10 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+
+### 1.0.9
+* output user_id and store language code correctly
+
 ### 1.0.8
 * Rename page categroy from controller/view naming to correct page category inclueding home, checkout, basket, confirmation, product, category pages
 * Added `listing` variable for category pages 
