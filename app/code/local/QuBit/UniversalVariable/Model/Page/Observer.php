@@ -231,15 +231,19 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   // Set the user info 
   public function _setUser() {
-    $user = $this->_getCustomer();
     $this->_user = array();
-    $email = $user->getEmail();
-    if ($email) $this->_user['email'] = $email;
+    $user    = $this->_getCustomer();
+    $email   = $user->getEmail();
     $user_id = $user->getEntityId();
-    if ($user_id) $this->_user['user_id'] = $user_id;
-    $this->_user['returning'] = $this->_user['id'] ? true : false;
-    // Buggy - doesn't update
-    //$this->_user['language'] = Mage::app()->getLocale()->getLocaleCode();
+    if ($email) {
+      $this->_user['email'] = $email; 
+    }
+    if ($user_id) {
+      $this->_user['user_id'] = $user_id;
+    }
+    $this->_user['returning'] = $user_id ? true : false;
+    $this->_user['language']  = Mage::getStoreConfig('general/locale/code', Mage::app()->getStore()->getId());;
+    
   }
 
   public function _getAddress($address) {
