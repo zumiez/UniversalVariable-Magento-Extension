@@ -406,7 +406,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $transaction['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($order);
       $transaction['payment_type']         = $order->getPayment()->getMethodInstance()->getTitle();
       $transaction['total']                = (float) $order->getGrandTotal();
-      $transaction['voucher']              = $order->getCouponCode();
+      
+      $voucher                             = $order->getCouponCode();
+      $transaction['voucher']              = $voucher ? $voucher : "";
+      
       // TODO: voucher_discount
       $transaction['tax']             = (float) $order->getTax();
       $transaction['shipping_cost']   = (float) $order->getShippingAmount();
