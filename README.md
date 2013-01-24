@@ -21,6 +21,8 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+### 1.0.10
+* when voucher code is not used, use empty string intead of null
 
 ### 1.0.9
 * output user_id and store language code correctly
