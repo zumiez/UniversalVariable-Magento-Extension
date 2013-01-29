@@ -330,17 +330,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $this->_listing['query'] = $_GET['q'];
       }
     } 
-    $collection = $category->getProductCollection();
-    $products = array();
-    foreach ($collection as $item) {
-      $productId  = $item->getId();
-      $product    = $this->_getProduct($productId);
-      // only expose visible product
-      if ($product->isVisibleInSiteVisibility()) {
-        array_push($products, $this->_getProductModel($product));
-      }
-    }
-    $this->_listing['items'] = $products;
   }
 
   public function _setProduct() {
