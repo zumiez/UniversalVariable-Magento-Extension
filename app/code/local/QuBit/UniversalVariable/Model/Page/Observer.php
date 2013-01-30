@@ -323,7 +323,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $this->_listing = array();
     if ($this->_isCategory()) {
       $category = $this->_getCurrentCategory();
-
     } elseif ($this->_isSearch()) {
       $category = $this->_getCatalogSearch();
       if (isset($_GET['q'])) { 
