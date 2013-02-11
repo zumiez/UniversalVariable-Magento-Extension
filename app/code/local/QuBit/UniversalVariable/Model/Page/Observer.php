@@ -397,8 +397,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       
       $voucher                             = $order->getCouponCode();
       $transaction['voucher']              = $voucher ? $voucher : "";
-      
-      // TODO: voucher_discount
+      $voucher_discount                    = -1 * $order->getDiscountAmount();
+      $transaction['voucher_discount']     = $voucher_discount ? $voucher_discount : "";
+
+      // $myOrder= Mage::getModel('sales/order')->load($orderID);;
+      // $oCoupon = Mage::getModel('salesrule/coupon')->load($couponCode, $order->getCouponCode());
+      // $oRule = Mage::getModel('salesrule/rule')->load($oCoupon->getRuleId());
+      // print_r($oRule);
+    
       $transaction['tax']             = (float) $order->getTax();
       $transaction['shipping_cost']   = (float) $order->getShippingAmount();
       $transaction['shipping_method'] = $order->getShippingMethod();
