@@ -21,6 +21,9 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
+### 1.0.12
+* Added `voucher_discount` in transaction
+
 ### 1.0.11
 * Deprecated `listing` variable on category pages, because it loops all the products without pagination; only output `listing.query` in search result that contains search queries.
 
