@@ -21,7 +21,7 @@ The extension is released under Apache License 2.0
 
 ## Changelog
 
-### 1.0.12
+### 1.0.13
 * Added `voucher_discount` in transaction
 
 ### 1.0.11
