@@ -8,15 +8,15 @@
 !app/etc/modules/QuBit_all.xml
 
 !app/code/
-!app/code/local/
+!app/code/community/
 
-!app/code/local/QuBit/
-!app/code/local/QuBit/UniversalVariable/
-!app/code/local/QuBit/UniversalVariable/*
-!app/code/local/QuBit/UniversalVariable/*/*
-!app/code/local/QuBit/UniversalVariable/*/*/*
-!app/code/local/QuBit/UniversalVariable/*/*/*/*
-!app/code/local/QuBit/UniversalVariable/*/*/*/*/*
+!app/code/community/QuBit/
+!app/code/community/QuBit/UniversalVariable/
+!app/code/community/QuBit/UniversalVariable/*
+!app/code/community/QuBit/UniversalVariable/*/*
+!app/code/community/QuBit/UniversalVariable/*/*/*
+!app/code/community/QuBit/UniversalVariable/*/*/*/*
+!app/code/community/QuBit/UniversalVariable/*/*/*/*/*
 
 !app/design/
 !app/design/frontend/
