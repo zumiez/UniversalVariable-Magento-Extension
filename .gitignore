@@ -35,4 +35,5 @@
 
 !README.md
 !LICENSE.txt
+!composer.json
 *.DS_Store
