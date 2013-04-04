@@ -17,6 +17,7 @@ This is the recommanded way of installing the extenion. Get your extension key o
 
 ## Development and Contribution
 
+ * [Changelog and Download Previous Versions](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/blob/master/CHANGELOG.md)
  * How to start development (Coming Soon)
 
 ## Happy Contributors
