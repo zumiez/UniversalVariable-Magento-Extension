@@ -9,7 +9,6 @@ Exported JavaScript object under `universal_variable` on all pages follows open 
 [http://github.com/QuBitProducts/UniversalVariable](http://github.com/QuBitProducts/UniversalVariable)
 
 ## Installation
-There are two ways of installing the extension. You can install the extesnion via Magento Connect or manually install the extension by copying files to Magento system directory. Installing from Magento Connect is strongly recommanded, which means you are able to receive notification when an update is available.
 
 ### Magento Connect
 
