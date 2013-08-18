@@ -374,8 +374,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
     $basket['currency']             = $this->_getCurrency();
     $basket['subtotal']             = (float) $quote->getSubtotal();
-    $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote);
-    $basket['tax']                  = (float) $quote->getTax();
+    $basket['tax']                  = $quote->getShippingAddress()->getTaxAmount();
+    $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
     $basket['shipping_cost']        = (float) $quote->getShippingAmount();
     $basket['shipping_method']      = $quote->getShippingMethod();
     $basket['total']                = (float) $quote->getGrandTotal();
@@ -387,15 +387,15 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $this->_basket = $basket;
   }
 
-  public function _doesSubtotalIncludeTax($order) {
+  public function _doesSubtotalIncludeTax($order, $tax) {
     /* Conditions:
         - if tax is zero, then set to false
         - Assume that if grand total is bigger than total after subtracting shipping, then subtotal does NOT include tax
     */
     $grandTotalWithoutShipping = $order->getGrandTotal() - $order->getShippingAmount();
-    if ($order->getTax() == 0 || $grandTotalWithoutShipping > $order->getSubtotal()) {
+    if ($tax == 0 || $grandTotalWithoutShipping > $order->getSubtotal()) {
       return false;
-    } {
+    } else {
       return true;
     }
   }
@@ -410,7 +410,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $transaction['order_id']             = $order->getIncrementId();
       $transaction['currency']             = $this->_getCurrency();
       $transaction['subtotal']             = (float) $order->getSubtotal();
-      $transaction['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($order);
+      $transaction['tax']                  = (float) $order->getTaxAmount();
+      $transaction['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($order, $transaction['tax']);
       $transaction['payment_type']         = $order->getPayment()->getMethodInstance()->getTitle();
       $transaction['total']                = (float) $order->getGrandTotal();
 
@@ -419,7 +420,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $voucher_discount                    = -1 * $order->getDiscountAmount();
       $transaction['voucher_discount']     = $voucher_discount ? $voucher_discount : 0;
 
-      $transaction['tax']             = (float) $order->getTax();
+      
       $transaction['shipping_cost']   = (float) $order->getShippingAmount();
       $transaction['shipping_method'] = $order->getShippingMethod();
 
