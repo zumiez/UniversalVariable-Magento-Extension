@@ -1,7 +1,7 @@
 ## Changelog
 
-### 1.0.17
-* fix tax number export in basket and transaction page
+### 1.0.17 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.17.zip)
+* fix tax number export in basket and transaction page 
 
 ### 1.0.16  [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.16.zip)
 * Export guest email in transaction pages
