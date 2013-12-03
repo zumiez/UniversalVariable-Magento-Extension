@@ -2,7 +2,7 @@
 
 class QuBit_UniversalVariable_Model_Page_Observer {
 
-  protected $_version     = "1.1.1";
+  protected $_version     = "1.2";
   protected $_user        = null;
   protected $_page        = null;
   protected $_basket      = null;
@@ -10,6 +10,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   protected $_search      = null;
   protected $_transaction = null;
   protected $_listing     = null;
+  protected $_events      = array();
 
   protected function _getRequest() {
     return Mage::app()->getFrontController()->getRequest();
@@ -36,6 +37,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   protected function _getCustomer() {
     return Mage::helper('customer')->getCustomer();
+  }
+
+  protected function _getBreadcrumb() {
+    return Mage::helper('catalog')->getBreadcrumbPath();
   }
 
   protected function _getCategory($category_id) {
@@ -197,12 +202,16 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return Mage::getVersion();
   }
 
+  public function getEvents() {
+    return array();
+  }
+
 
 /*
  * Set the model attributes to be passed front end
  */
 
-  public function _getPage() {
+  public function _getPageType() {
     if ($this->_isHome()) {
       return 'home';
     } elseif ($this->_isContent()) {
@@ -224,9 +233,19 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
   }
 
+  public function _getPageBreadcrumb() {
+    $arr = $this->_getBreadcrumb();
+    $breadcrumb = array();
+    foreach ($arr as $category) {
+      $breadcrumb[] = $category['label'];
+    }
+    return $breadcrumb;
+  }
+
   public function _setPage() {
     $this->_page = array();
-    $this->_page['category'] = $this->_getPage();
+    $this->_page['type'] = $this->_getPageType();
+    $this->_page['breadcrumb'] = $this->_getPageBreadcrumb();
   }
 
   // Set the user info
@@ -246,11 +265,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
 
     if ($email) {
-      $this->_user['email'] = $email;
+      $this->_user['email'] = (string) $email;
     }
 
     if ($user_id) {
-      $this->_user['user_id'] = $user_id;
+      $this->_user['user_id'] = (string) $user_id;
     }
     $this->_user['returning'] = $user_id ? true : false;
     $this->_user['language']  = Mage::getStoreConfig('general/locale/code', Mage::app()->getStore()->getId());;
@@ -260,11 +279,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _getAddress($address) {
     $billing = array();
     if ($address) {
-      $billing['name']     = $address->getName();
-      $billing['address']  = $address->getStreetFull();
-      $billing['city']     = $address->getCity();
-      $billing['postcode'] = $address->getPostcode();
-      $billing['country']  = $address->getCountry();
+      $billing['name']     = (string) $address->getName();
+      $billing['address']  = (string) $address->getStreetFull();
+      $billing['city']     = (string) $address->getCity();
+      $billing['postcode'] = (string) $address->getPostcode();
+      $billing['country']  = (string) $address->getCountry();
     }
     // TODO: $billing['state']
     return $billing;
@@ -280,17 +299,33 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _getProductModel($product) {
     $product_model = array();
-    $product_model['id']       = $product->getId();
-    $product_model['sku_code'] = $product->getSku();
-    $product_model['url']      = $product->getProductUrl();
-    $product_model['name']     = $product->getName();
+    $product_model['id']       = (string) $product->getId();
+    $product_model['sku_code'] = (string) $product->getSku();
+    $product_model['url']      = (string) $product->getProductUrl();
+    $product_model['name']     = (string) $product->getName();
     $product_model['unit_price']      = (float) $product->getPrice();
     $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
-    $product_model['currency']        = $this->_getCurrency();
-    $product_model['description']     = $product->getShortDescription();
-    $product_model['stock']           = $this->_getProuctStock($product);
-    $product_model['category']        = $this->_getProductCategories($product);
+    $product_model['currency']        = (string) $this->_getCurrency();
+    $product_model['description']     = (string) strip_tags($product->getShortDescription());
+    $product_model['stock']           = (int) $this->_getProuctStock($product);
+
+    $categories = $this->_getProductCategories($product);
+    if (isset($categories[0])) {
+      $product_model['category'] = (string) $categories[0];
+    }
+    if (isset($categories[1])) {
+      $product_model['subcategory'] = (string) $categories[1];
+    }
+
     return $product_model;
+  }
+
+  public function _getFirstProductCategoryName($product_id) {
+    $product = $this->_getProduct($product_id);
+    $category_ids = $product->getCategoryIds();
+    if (empty($category_ids)) return;
+    $_cat = $this->_getCategory($category_ids[0]);
+    return $_cat->getName();
   }
 
   public function _getProductCategories($product) {
@@ -301,16 +336,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $_cat = $this->_getCategory($category_id);
         $category_names[] = $_cat->getName();
       }
-      if (is_array($category_names) and !empty($category_names)) {
-        return implode(', ', $category_names);
-      } else {
-        return false;
-      }
+      return $category_names;
     } else {
       return false;
     }
   }
-
 
   public function _getLineItems($items, $page_type) {
     $line_items = array();
@@ -362,6 +392,19 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $cart = $this->_getCheckoutCart();
     } elseif ($this->_isCheckout()) {
       $cart = $this->_getCheckoutSession();
+    } else {
+      // Secret Sauce - Initializes the Session for the FRONTEND
+      // Magento uses different sessions for 'frontend' and 'adminhtml'
+      Mage::getSingleton('core/session', array('name'=>'frontend'));
+
+      // $cart = Mage::getSingleton('checkout/cart')->getItemsCount();
+      // $cart = Mage::helper('checkout/cart')->getItemsCount();
+      $cart = Mage::helper('checkout/cart')->getCart();
+
+    }
+
+    if (!isset($cart)) {
+      return;
     }
 
     $basket = array();
@@ -370,14 +413,14 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     // Set normal params
     $basket_id = $this->_getCheckoutSession()->getQuoteId();
     if ($basket_id) {
-      $basket['id'] = $basket_id;
+      $basket['id'] = (string) $basket_id;
     }
-    $basket['currency']             = $this->_getCurrency();
+    $basket['currency']             = (string) $this->_getCurrency();
     $basket['subtotal']             = (float) $quote->getSubtotal();
-    $basket['tax']                  = $quote->getShippingAddress()->getTaxAmount();
-    $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
+    $basket['tax']                  = (float) $quote->getShippingAddress()->getTaxAmount();
+    $basket['subtotal_include_tax'] = (boolean) $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
     $basket['shipping_cost']        = (float) $quote->getShippingAmount();
-    $basket['shipping_method']      = $quote->getShippingMethod();
+    $basket['shipping_method']      = (string) $quote->getShippingMethod();
     $basket['total']                = (float) $quote->getGrandTotal();
 
     // Line items
@@ -457,9 +500,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $this->_setListing();
     }
 
-    if ($this->_isBasket() || $this->_isCheckout()) {
+    // if ($this->_isBasket() || $this->_isCheckout()) {
       $this->_setBasket();
-    }
+    // }
 
     if ($this->_isConfirmation()) {
       $this->_setTranscation();

@@ -8,9 +8,9 @@
   $mage = Mage::getSingleton($observer);
 
   if ($qubit_opentag_async == 1) {
-  	$qubit_opentag_async = 'async defer';
+    $qubit_opentag_async = 'async defer';
   } else {
-  	$qubit_opentag_async = '';
+    $qubit_opentag_async = '';
   };
 ?>
 
@@ -25,6 +25,7 @@
   $listing         = $mage->getListing();
   $transaction     = $mage->getTransaction();
   $magento_version = $mage->getMageVersion();
+  $events          = $mage->getEvents();
 ?>
 <!-- Universal Variable Start -->
 <script type="text/javascript">
@@ -45,6 +46,7 @@
   <?php if ($transaction): ?>
   window.universal_variable.transaction     = <?php echo json_encode($transaction) ?>;
   <?php endif; ?> 
+  window.universal_variable.events          = <?php echo json_encode($events); ?>;
 </script>
 <!-- Universal Variable End -->
 <?php endif;?>
