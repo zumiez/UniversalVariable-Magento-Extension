@@ -2,7 +2,7 @@
 
 class QuBit_UniversalVariable_Model_Page_Observer {
 
-  protected $_version     = "1.2";
+  protected $_version     = "1.2.0";
   protected $_user        = null;
   protected $_page        = null;
   protected $_basket      = null;
@@ -265,7 +265,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
 
     if ($email) {
-      $this->_user['email'] = (string) $email;
+      $this->_user['email'] = $email;
     }
 
     if ($user_id) {
@@ -279,11 +279,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _getAddress($address) {
     $billing = array();
     if ($address) {
-      $billing['name']     = (string) $address->getName();
-      $billing['address']  = (string) $address->getStreetFull();
-      $billing['city']     = (string) $address->getCity();
-      $billing['postcode'] = (string) $address->getPostcode();
-      $billing['country']  = (string) $address->getCountry();
+      $billing['name']     = $address->getName();
+      $billing['address']  = $address->getStreetFull();
+      $billing['city']     = $address->getCity();
+      $billing['postcode'] = $address->getPostcode();
+      $billing['country']  = $address->getCountry();
     }
     // TODO: $billing['state']
     return $billing;
@@ -299,33 +299,25 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _getProductModel($product) {
     $product_model = array();
-    $product_model['id']       = (string) $product->getId();
-    $product_model['sku_code'] = (string) $product->getSku();
-    $product_model['url']      = (string) $product->getProductUrl();
-    $product_model['name']     = (string) $product->getName();
+    $product_model['id']       = $product->getId();
+    $product_model['sku_code'] = $product->getSku();
+    $product_model['url']      = $product->getProductUrl();
+    $product_model['name']     = $product->getName();
     $product_model['unit_price']      = (float) $product->getPrice();
     $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
-    $product_model['currency']        = (string) $this->_getCurrency();
-    $product_model['description']     = (string) strip_tags($product->getShortDescription());
+    $product_model['currency']        = $this->_getCurrency();
+    $product_model['description']     = strip_tags($product->getShortDescription());
     $product_model['stock']           = (int) $this->_getProuctStock($product);
 
     $categories = $this->_getProductCategories($product);
     if (isset($categories[0])) {
-      $product_model['category'] = (string) $categories[0];
+      $product_model['category'] = $categories[0];
     }
     if (isset($categories[1])) {
-      $product_model['subcategory'] = (string) $categories[1];
+      $product_model['subcategory'] = $categories[1];
     }
 
     return $product_model;
-  }
-
-  public function _getFirstProductCategoryName($product_id) {
-    $product = $this->_getProduct($product_id);
-    $category_ids = $product->getCategoryIds();
-    if (empty($category_ids)) return;
-    $_cat = $this->_getCategory($category_ids[0]);
-    return $_cat->getName();
   }
 
   public function _getProductCategories($product) {
@@ -357,9 +349,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $litem_model['total_discount'] = (float) $item->getDiscountAmount();
 
         if ($page_type == 'basket') {
-          $litem_model['quantity'] = (float) $item->getQty();
+          $litem_model['quantity'] = $item->getQty();
         } else {
-          $litem_model['quantity'] = (float) $item->getQtyOrdered();
+          $litem_model['quantity'] = $item->getQtyOrdered();
         }
 
         array_push($line_items, $litem_model);
@@ -415,12 +407,12 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     if ($basket_id) {
       $basket['id'] = (string) $basket_id;
     }
-    $basket['currency']             = (string) $this->_getCurrency();
+    $basket['currency']             = $this->_getCurrency();
     $basket['subtotal']             = (float) $quote->getSubtotal();
     $basket['tax']                  = (float) $quote->getShippingAddress()->getTaxAmount();
     $basket['subtotal_include_tax'] = (boolean) $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
     $basket['shipping_cost']        = (float) $quote->getShippingAmount();
-    $basket['shipping_method']      = (string) $quote->getShippingMethod();
+    $basket['shipping_method']      = $quote->getShippingMethod();
     $basket['total']                = (float) $quote->getGrandTotal();
 
     // Line items
@@ -500,9 +492,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $this->_setListing();
     }
 
-    // if ($this->_isBasket() || $this->_isCheckout()) {
+    if (!$this->_isConfirmation()) {
       $this->_setBasket();
-    // }
+    }
 
     if ($this->_isConfirmation()) {
       $this->_setTranscation();

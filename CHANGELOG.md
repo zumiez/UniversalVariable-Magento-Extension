@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.0.18 
+* added `basket` on every page, updated `page` removing `category` and `subcategory`, and adding `type` and `breadcrumb` variables.
+
 ### 1.0.17 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.17.zip)
 * fix tax number export in basket and transaction page 
 
