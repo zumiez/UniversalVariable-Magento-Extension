@@ -1,10 +1,13 @@
 ## Changelog
 
 ### 1.0.18 
-* added `basket` on every page, updated `page` removing `category` and `subcategory`, and adding `type` and `breadcrumb` variables.
+* Added `basket` on every page except confirmation page
+* Added `breadcrumb` variables under `universal_variable.page.breadcrumb` whenenver this information is available
+* DEPRECATION: We started deprecating `page.category`, moving to `page.type`. We current keep both to give times for frontend JavaScript migration. We recommand to use `page.type` to describe type of page from an ecommerce funnel perspective. Reference: http://tools.qubitproducts.com/uv/developers/specification/#toc_7
+* DEPRECATION: `page.category` and `page.subcategory` will soon be deprecated in the next release
 
 ### 1.0.17 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.17.zip)
-* fix tax number export in basket and transaction page 
+* Aix tax number export in basket and transaction page 
 
 ### 1.0.16  [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.16.zip)
 * Export guest email in transaction pages
