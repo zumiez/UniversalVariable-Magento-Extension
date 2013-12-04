@@ -2,7 +2,9 @@
 
 class QuBit_UniversalVariable_Model_Page_Observer {
 
-  protected $_version     = "1.1.1";
+  // This is the UV specification Version
+  // http://tools.qubitproducts.com/uv/developers/specification
+  protected $_version     = "1.2";
   protected $_user        = null;
   protected $_page        = null;
   protected $_basket      = null;
@@ -10,6 +12,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   protected $_search      = null;
   protected $_transaction = null;
   protected $_listing     = null;
+  protected $_events      = array();
 
   protected function _getRequest() {
     return Mage::app()->getFrontController()->getRequest();
@@ -38,6 +41,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return Mage::helper('customer')->getCustomer();
   }
 
+  protected function _getBreadcrumb() {
+    return Mage::helper('catalog')->getBreadcrumbPath();
+  }
+
   protected function _getCategory($category_id) {
     return Mage::getModel('catalog/category')->load($category_id);
   }
@@ -56,10 +63,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   protected function _getCatalogSearch() {
     return Mage::getSingleton('catalogsearch/advanced');
-  }
-
-  protected function _getCheckoutCart() {
-    return Mage::getSingleton('checkout/cart');
   }
 
   protected function _getCheckoutSession() {
@@ -197,12 +200,16 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return Mage::getVersion();
   }
 
+  public function getEvents() {
+    return array();
+  }
+
 
 /*
  * Set the model attributes to be passed front end
  */
 
-  public function _getPage() {
+  public function _getPageType() {
     if ($this->_isHome()) {
       return 'home';
     } elseif ($this->_isContent()) {
@@ -224,9 +231,23 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
   }
 
+  public function _getPageBreadcrumb() {
+    $arr = $this->_getBreadcrumb();
+    $breadcrumb = array();
+    foreach ($arr as $category) {
+      $breadcrumb[] = $category['label'];
+    }
+    return $breadcrumb;
+  }
+
   public function _setPage() {
     $this->_page = array();
-    $this->_page['category'] = $this->_getPage();
+    $this->_page['type'] = $this->_getPageType();
+    // WARNING: `page.category` will be deprecated in the next release
+    //          We will follow the specification that uses `page.type`
+    //          Please migrate any frontend JavaScripts using this `universal_variable.page.category` variable
+    $this->_page['category'] = $this->_page['type'];
+    $this->_page['breadcrumb'] = $this->_getPageBreadcrumb();
   }
 
   // Set the user info
@@ -250,7 +271,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     }
 
     if ($user_id) {
-      $this->_user['user_id'] = $user_id;
+      $this->_user['user_id'] = (string) $user_id;
     }
     $this->_user['returning'] = $user_id ? true : false;
     $this->_user['language']  = Mage::getStoreConfig('general/locale/code', Mage::app()->getStore()->getId());;
@@ -287,9 +308,17 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $product_model['unit_price']      = (float) $product->getPrice();
     $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
     $product_model['currency']        = $this->_getCurrency();
-    $product_model['description']     = $product->getShortDescription();
-    $product_model['stock']           = $this->_getProuctStock($product);
-    $product_model['category']        = $this->_getProductCategories($product);
+    $product_model['description']     = strip_tags($product->getShortDescription());
+    $product_model['stock']           = (int) $this->_getProuctStock($product);
+
+    $categories = $this->_getProductCategories($product);
+    if (isset($categories[0])) {
+      $product_model['category'] = $categories[0];
+    }
+    if (isset($categories[1])) {
+      $product_model['subcategory'] = $categories[1];
+    }
+
     return $product_model;
   }
 
@@ -301,16 +330,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $_cat = $this->_getCategory($category_id);
         $category_names[] = $_cat->getName();
       }
-      if (is_array($category_names) and !empty($category_names)) {
-        return implode(', ', $category_names);
-      } else {
-        return false;
-      }
+      return $category_names;
     } else {
       return false;
     }
   }
-
 
   public function _getLineItems($items, $page_type) {
     $line_items = array();
@@ -357,11 +381,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
   public function _setBasket() {
-    // Get from different model depending on page
-    if ($this->_isBasket()) {
-      $cart = $this->_getCheckoutCart();
-    } elseif ($this->_isCheckout()) {
-      $cart = $this->_getCheckoutSession();
+    $cart = $this->_getCheckoutSession();
+    
+    if (!isset($cart)) {
+      return;
     }
 
     $basket = array();
@@ -370,12 +393,12 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     // Set normal params
     $basket_id = $this->_getCheckoutSession()->getQuoteId();
     if ($basket_id) {
-      $basket['id'] = $basket_id;
+      $basket['id'] = (string) $basket_id;
     }
     $basket['currency']             = $this->_getCurrency();
     $basket['subtotal']             = (float) $quote->getSubtotal();
-    $basket['tax']                  = $quote->getShippingAddress()->getTaxAmount();
-    $basket['subtotal_include_tax'] = $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
+    $basket['tax']                  = (float) $quote->getShippingAddress()->getTaxAmount();
+    $basket['subtotal_include_tax'] = (boolean) $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
     $basket['shipping_cost']        = (float) $quote->getShippingAmount();
     $basket['shipping_method']      = $quote->getShippingMethod();
     $basket['total']                = (float) $quote->getGrandTotal();
@@ -457,7 +480,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $this->_setListing();
     }
 
-    if ($this->_isBasket() || $this->_isCheckout()) {
+    if (!$this->_isConfirmation()) {
       $this->_setBasket();
     }
 
