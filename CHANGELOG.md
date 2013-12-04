@@ -1,6 +1,6 @@
 ## Changelog
 
-### 1.0.18 
+### 1.0.18 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.18.zip)
 * Added `basket` on every page except confirmation page
 * Added `breadcrumb` variables under `universal_variable.page.breadcrumb` whenenver this information is available
 * DEPRECATION: We started deprecating `page.category`, moving to `page.type`. We current keep both to give times for frontend JavaScript migration. We recommand to use `page.type` to describe type of page from an ecommerce funnel perspective. Reference: http://tools.qubitproducts.com/uv/developers/specification/#toc_7
