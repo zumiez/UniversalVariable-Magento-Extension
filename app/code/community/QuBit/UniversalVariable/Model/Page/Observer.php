@@ -2,7 +2,9 @@
 
 class QuBit_UniversalVariable_Model_Page_Observer {
 
-  protected $_version     = "1.2.0";
+  // This is the UV specification Version
+  // http://tools.qubitproducts.com/uv/developers/specification
+  protected $_version     = "1.2";
   protected $_user        = null;
   protected $_page        = null;
   protected $_basket      = null;
@@ -61,10 +63,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   protected function _getCatalogSearch() {
     return Mage::getSingleton('catalogsearch/advanced');
-  }
-
-  protected function _getCheckoutCart() {
-    return Mage::getSingleton('checkout/cart');
   }
 
   protected function _getCheckoutSession() {
@@ -245,6 +243,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   public function _setPage() {
     $this->_page = array();
     $this->_page['type'] = $this->_getPageType();
+    // WARNING: `page.category` will be deprecated in the next release
+    //          We will follow the specification that uses `page.type`
+    //          Please migrate any frontend JavaScripts using this `universal_variable.page.category` variable
+    $this->_page['category'] = $this->_page['type'];
     $this->_page['breadcrumb'] = $this->_getPageBreadcrumb();
   }
 
@@ -349,9 +351,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
         $litem_model['total_discount'] = (float) $item->getDiscountAmount();
 
         if ($page_type == 'basket') {
-          $litem_model['quantity'] = $item->getQty();
+          $litem_model['quantity'] = (float) $item->getQty();
         } else {
-          $litem_model['quantity'] = $item->getQtyOrdered();
+          $litem_model['quantity'] = (float) $item->getQtyOrdered();
         }
 
         array_push($line_items, $litem_model);
@@ -379,22 +381,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
   public function _setBasket() {
-    // Get from different model depending on page
-    if ($this->_isBasket()) {
-      $cart = $this->_getCheckoutCart();
-    } elseif ($this->_isCheckout()) {
-      $cart = $this->_getCheckoutSession();
-    } else {
-      // Secret Sauce - Initializes the Session for the FRONTEND
-      // Magento uses different sessions for 'frontend' and 'adminhtml'
-      Mage::getSingleton('core/session', array('name'=>'frontend'));
-
-      // $cart = Mage::getSingleton('checkout/cart')->getItemsCount();
-      // $cart = Mage::helper('checkout/cart')->getItemsCount();
-      $cart = Mage::helper('checkout/cart')->getCart();
-
-    }
-
+    $cart = $this->_getCheckoutSession();
+    
     if (!isset($cart)) {
       return;
     }
