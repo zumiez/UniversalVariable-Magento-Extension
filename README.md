@@ -13,6 +13,13 @@ Qubit's Universal Variable streamlines the process of passing values between Ope
 Exported JavaScript object under `universal_variable` on all pages follows open standarded universal variable specification. The specificaiton is also available on GitHub:
 [http://github.com/QuBitProducts/UniversalVariable](http://github.com/QuBitProducts/UniversalVariable)
 
+## Supported Magento Versions
+
+We've tested the followed versions. Please submit Github Issues with detailed description if you find any bugs.
+
+ * 1.5.x, 1.6.x, 1.7.x, 1.8.x CE
+ * 1.5.x, 1.6.x, 1.7.x, 1.8.x Enterprise
+
 ## Installation
 
 ### Magento Connect
