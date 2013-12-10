@@ -13,13 +13,10 @@
           </universal_variable_main>
       </models>
       <helpers>
-			  <universal_variable_main>
-				  <class>QuBit_UniversalVariable_Helper</class>
-			  </universal_variable_main>
-        <universal_variable_data_helper>
-          <class>QuBit_UniversalVariable_Helper_Data</class>
-        </universal_variable_data_helper>
-		  </helpers>
+        <universal_variable_main>
+          <class>QuBit_UniversalVariable_Helper</class>
+        </universal_variable_main>
+      </helpers>
       <events>
         <controller_action_layout_load_before>
           <observers>
