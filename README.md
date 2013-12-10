@@ -19,10 +19,9 @@ Exported JavaScript object under `universal_variable` on all pages follows open 
 
 This is the recommanded way of installing the extenion. Get your extension key on [the extension page](http://www.magentocommerce.com/magento-connect/catalog/product/view/id/13932/s/qubit-universal-variable-9450/) and install the extension in your Magento Connect extension manager.
 
-## Development and Contribution
+## Development
 
  * [Changelog and Download Previous Versions](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/blob/master/CHANGELOG.md)
- * How to start development (Coming Soon)
 
 ## Happy Contributors
 
