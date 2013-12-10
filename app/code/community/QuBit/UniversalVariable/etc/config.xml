@@ -39,15 +39,6 @@
     </global>
 
     <frontend>
-      <routers>
-          <routeurfrontend>
-              <use>standard</use>
-              <args>
-                <module>QuBit_UniversalVariable</module>
-                <frontName>universal_variable</frontName>
-              </args>
-          </routeurfrontend>
-      </routers>
 
       <!-- Layout -->
       <layout>

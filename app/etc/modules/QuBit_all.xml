@@ -6,15 +6,4 @@
         <codePool>community</codePool>
      </QuBit_UniversalVariable>
    </modules>
-   <frontend>
-       <routers>
-          <routeurfrontend>
-              <use>standard</use>
-              <args>
-                 <module>QuBit_UniversalVariable</module>
-                 <frontName>universal_variable</frontName>
-              </args>
-           </routeurfrontend>
-       </routers>
-    </frontend>
 </config>
