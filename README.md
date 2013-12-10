@@ -24,7 +24,8 @@ This is the recommanded way of installing the extenion. Get your extension key o
 Thank you to the contributors improving our code base:
 
 * Robert Coleman [@rjocoleman](https://github.com/rjocoleman)
-* [@rgranadino](https://github.com/rgranadino)
+* beeplogic [@rgranadino](https://github.com/rgranadino)
+* Rudger [@Rud5G](https://github.com/Rud5G)
 
 ## License
 
