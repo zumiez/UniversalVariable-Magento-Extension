@@ -4,7 +4,7 @@
   $qubit_opentag_enabled                    = Mage::getStoreConfig('qubit/qubit_opentag_enabled');
   $qubit_universal_variable_enabled         = Mage::getStoreConfig('qubit/qubit_universal_variable_enabled');
 
-  $observer = 'universal_variable_main/observer';
+  $observer = 'universal_variable_main/page_observer';
   $mage = Mage::getSingleton($observer);
 
   if ($qubit_opentag_async == 1) {
