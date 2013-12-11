@@ -18,9 +18,9 @@
         </universal_variable_main>
       </helpers>
       <blocks>
-          <universal_variable_block>
-            <class>QuBit_UniversalVariable_Block_Uv</class>
-          </universal_variable_block>
+          <universal_variable_main>
+            <class>QuBit_UniversalVariable_Block</class>
+          </universal_variable_main>
       </blocks>
     </global>
 
