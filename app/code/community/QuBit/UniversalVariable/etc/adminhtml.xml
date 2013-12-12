@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <qubit_universalvariable translate="title" module="universal_variable_main">
+                                        <sort_order>0</sort_order>
+                                        <title>Manage QuBit Script</title>
+                                    </qubit_universalvariable>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

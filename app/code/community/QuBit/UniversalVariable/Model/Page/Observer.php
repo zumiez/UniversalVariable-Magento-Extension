@@ -77,16 +77,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return Mage::getModel('sales/order_address');
   }
 
-
-  /*
-   * Creates  Block View
-   */
-  protected function _createBlock() {
-    $layout = Mage::app()->getLayout();
-    $block = $layout->createBlock('QuBit_UniversalVariable_Block_Uv','universal_variable_block');
-  }
-
-
   /*
   * Determine which page type we're on
   */
@@ -488,7 +478,6 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $this->_setTranscation();
     }
 
-    $this->_createBlock();
     return $this;
   }
 
