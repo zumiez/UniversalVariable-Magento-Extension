@@ -5,10 +5,38 @@
     "license": "Apache-2.0",
     "authors":[
         {
-            "name":"Jing Dong"
+            "name":"Jing Dong/@activars",
+            "role": "maintainer"
+        },
+        {
+            "name": "Robert Coleman/@rjocoleman",
+            "role": "contributor"
+        },
+        {
+            "name": "Rolando Granadino/@rgranadino",
+            "role": "contributor"
+        },
+        {
+            "name": "Rudger/@Rud5G",
+            "role": "contributor"
         }
     ],
     "require": {
         "magento-hackathon/magento-composer-installer": "*"
+    },
+    "require-dev": {
+        "ecomdev/mage-ci": "1.0.6"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }
+    ],
+    "extra":{
+        "magento-root-dir": "test/"
     }
 }
