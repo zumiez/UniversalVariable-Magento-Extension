@@ -276,8 +276,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $billing['city']     = $address->getCity();
       $billing['postcode'] = $address->getPostcode();
       $billing['country']  = $address->getCountry();
+      $state = $address->getRegion();
+      $billing['state']    = $state ? $state : '';
     }
-    // TODO: $billing['state']
     return $billing;
   }
 
