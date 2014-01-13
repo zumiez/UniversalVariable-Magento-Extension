@@ -11,7 +11,7 @@
 * DEPRECATION: `page.category` and `page.subcategory` will soon be deprecated in the next release
 
 ### 1.0.17 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.17.zip)
-* Aix tax number export in basket and transaction page 
+* Fix tax number export in basket and transaction page 
 
 ### 1.0.16  [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.16.zip)
 * Export guest email in transaction pages
