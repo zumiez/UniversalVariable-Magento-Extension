@@ -1,6 +1,6 @@
 ## Changelog
 
-### 1.0.20
+### 1.0.20 [:arrow_down: Download](https://github.com/QubitProducts/UniversalVariable-Magento-Extension/archive/1.0.20.zip)
 * Added state variable in shipping and delivery address. If state/region is not available for certain contries, it will be exported as empty string to be used by tracking script.
 * Refactoring and clean code, disable UV execution on admin page. (https://github.com/QubitProducts/UniversalVariable-Magento-Extension/pull/32)
 
