@@ -347,6 +347,13 @@ class QuBit_UniversalVariable_Model_Page_Observer {
           $litem_model['quantity'] = (float) $item->getQtyOrdered();
         }
 
+        // Recalculate unit_sale_price after voucher applied Github: #35
+        // https://github.com/QubitProducts/UniversalVariable-Magento-Extension/issues/35
+        $unit_sale_price_after_discount = $litem_model['product']['unit_sale_price'];
+        $unit_sale_price_after_discount = 
+          $unit_sale_price_after_discount - ($litem_model['total_discount'] / $litem_model['quantity']);
+        $litem_model['product']['unit_sale_price'] = $unit_sale_price_after_discount;
+
         array_push($line_items, $litem_model);
       }
     }
