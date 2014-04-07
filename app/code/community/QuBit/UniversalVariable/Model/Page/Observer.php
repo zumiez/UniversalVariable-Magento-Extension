@@ -282,7 +282,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $billing;
   }
 
-  public function _getProuctStock($product) {
+  public function _getProductStock($product) {
     return (int) Mage::getModel('cataloginventory/stock_item')->loadByProduct($product)->getQty();
   }
 
@@ -300,7 +300,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
     $product_model['currency']        = $this->_getCurrency();
     $product_model['description']     = strip_tags($product->getShortDescription());
-    $product_model['stock']           = (int) $this->_getProuctStock($product);
+    $product_model['stock']           = (int) $this->_getProductStock($product);
 
     $categories = $this->_getProductCategories($product);
     if (isset($categories[0])) {
