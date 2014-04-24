@@ -398,7 +398,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $basket['tax']                  = (float) $quote->getShippingAddress()->getTaxAmount();
     $basket['subtotal_include_tax'] = (boolean) $this->_doesSubtotalIncludeTax($quote, $basket['tax']);
     $basket['shipping_cost']        = (float) $quote->getShippingAmount();
-    $basket['shipping_method']      = $quote->getShippingMethod();
+    $basket['shipping_method']      = $this->_extractShippingMethod($quote);
     $basket['total']                = (float) $quote->getGrandTotal();
 
     // Line items
@@ -419,6 +419,11 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     } else {
       return true;
     }
+  }
+
+  public function _extractShippingMethod($order) {
+    $shipping_method = $order->getShippingMethod();
+    return $shipping_method ? $shipping_method : '';
   }
 
   public function _setTranscation() {
@@ -443,7 +448,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
       
       $transaction['shipping_cost']   = (float) $order->getShippingAmount();
-      $transaction['shipping_method'] = $order->getShippingMethod();
+      $transaction['shipping_method'] = $this->_extractShippingMethod($order);
 
       // Get addresses
       $shippingId        = $order->getShippingAddress()->getId();
