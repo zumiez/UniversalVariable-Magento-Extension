@@ -342,7 +342,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
   public function _getProductModel($product) {
     $product_model = array();
-
+      $product_model['manufacturer'] = $product->getManufacturer();
     $product_model['id']       = $product->getId();
     $product_model['sku_code'] = $product->getSku();
     $product_model['url']      = $product->getProductUrl();
