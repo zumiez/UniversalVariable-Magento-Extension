@@ -340,20 +340,24 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $customOptsArray;
   }
 
-  public function _getProductModel($product) {
-    $product_model = array();
+    /**
+     * @param $product
+     * @return array
+     */
+    public function _getProductModel($product) {
+      $product_model = array();
       $product_model['manufacturer'] = $product->getManufacturer();
-    $product_model['id']       = $product->getId();
-    $product_model['sku_code'] = $product->getSku();
-    $product_model['url']      = $product->getProductUrl();
-    $product_model['name']     = $product->getName();
-    $product_model['unit_price']      = (float) $product->getPrice();
-    $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
-    $product_model['currency']        = $this->_getCurrency();
-    $product_model['description']     = strip_tags($product->getShortDescription());
-    $product_model['stock']           = (int) $this->_getProductStock($product);
+      $product_model['id']       = $product->getId();
+      $product_model['sku_code'] = $product->getSku();
+      $product_model['url']      = $product->getProductUrl();
+      $product_model['name']     = $product->getName();
+      $product_model['unit_price']      = (float) $product->getPrice();
+      $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
+      $product_model['currency']        = $this->_getCurrency();
+      $product_model['description']     = strip_tags($product->getShortDescription());
+      $product_model['stock']           = (int) $this->_getProductStock($product);
 
-    $categories = $this->_getProductCategories($product);
+      $categories = $this->_getProductCategories($product);
     if (isset($categories[0])) {
       $product_model['category'] = $categories[0];
     }
@@ -382,7 +386,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $line_items = array();
     foreach($items as $item) {
       $productId = $item->getProductId();
-      
+
       $subProductSku = null;
       $subProductStock = null;
       $subProductSalePrice = null;
