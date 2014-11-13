@@ -355,7 +355,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
       $product_model['currency']        = $this->_getCurrency();
       $product_model['description']     = strip_tags($product->getShortDescription());
-      $product_model['stock']           = (int) $this->_getProductStock($product);
+     // $product_model['stock']           = (int) $this->_getProductStock($product);
 
       $categories = $this->_getProductCategories($product);
     if (isset($categories[0])) {
