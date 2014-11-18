@@ -397,8 +397,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       }
 
       $product   = $this->_getProduct($productId);
-      // product needs to be visible
-      if ($product->isVisibleInSiteVisibility()) {
+      // product needs to be visible or a giftcard
+        if ($product->isVisibleInSiteVisibility() || $product->getTypeId() == 'giftcard') {
         $litem_model             = array();
         $litem_model['product']  = $this->_getProductModel($product);
 
