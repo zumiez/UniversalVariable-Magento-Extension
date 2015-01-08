@@ -534,7 +534,9 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $transaction['shipping_method'] = $this->_extractShippingMethod($order);
 
       // Get addresses
-      if (method_exists($order,'getShippingAddress')) {
+      //checking for getShippingAddress() otherwise $order->getShippingAddress()->getId() will result in fatal error
+      //if order is all virtual i.e. only gift cards are purchased.
+      if (method_exists($order,'getShippingAddress') && $order->getShippingAddress()) {
         $shippingId        = $order->getShippingAddress()->getId();
         $shippingAddress   = $order->getShippingAddress();
         $transaction['delivery'] = $this->_getAddress($shippingAddress);
