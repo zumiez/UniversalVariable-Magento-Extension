@@ -575,4 +575,3 @@ class QuBit_UniversalVariable_Model_Page_Observer {
   }
 
 }
-?>
