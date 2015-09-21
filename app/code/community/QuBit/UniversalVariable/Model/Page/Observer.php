@@ -340,20 +340,24 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     return $customOptsArray;
   }
 
-  public function _getProductModel($product) {
-    $product_model = array();
+    /**
+     * @param $product
+     * @return array
+     */
+    public function _getProductModel($product) {
+      $product_model = array();
+      $product_model['manufacturer'] = $product->getAttributeText('manufacturer');
+      $product_model['id']       = $product->getId();
+      $product_model['sku_code'] = $product->getSku();
+      $product_model['url']      = $product->getProductUrl();
+      $product_model['name']     = $product->getName();
+      $product_model['unit_price']      = (float) $product->getPrice();
+      $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
+      $product_model['currency']        = $this->_getCurrency();
+      $product_model['description']     = strip_tags($product->getShortDescription());
+     // $product_model['stock']           = (int) $this->_getProductStock($product);
 
-    $product_model['id']       = $product->getId();
-    $product_model['sku_code'] = $product->getSku();
-    $product_model['url']      = $product->getProductUrl();
-    $product_model['name']     = $product->getName();
-    $product_model['unit_price']      = (float) $product->getPrice();
-    $product_model['unit_sale_price'] = (float) $product->getFinalPrice();
-    $product_model['currency']        = $this->_getCurrency();
-    $product_model['description']     = strip_tags($product->getShortDescription());
-    $product_model['stock']           = (int) $this->_getProductStock($product);
-
-    $categories = $this->_getProductCategories($product);
+      $categories = $this->_getProductCategories($product);
     if (isset($categories[0])) {
       $product_model['category'] = $categories[0];
     }
@@ -382,7 +386,7 @@ class QuBit_UniversalVariable_Model_Page_Observer {
     $line_items = array();
     foreach($items as $item) {
       $productId = $item->getProductId();
-      
+
       $subProductSku = null;
       $subProductStock = null;
       $subProductSalePrice = null;
@@ -393,8 +397,8 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       }
 
       $product   = $this->_getProduct($productId);
-      // product needs to be visible
-      if ($product->isVisibleInSiteVisibility()) {
+      // product needs to be visible or a giftcard
+        if ($product->isVisibleInSiteVisibility() || $product->getTypeId() == 'giftcard') {
         $litem_model             = array();
         $litem_model['product']  = $this->_getProductModel($product);
 
@@ -529,14 +533,10 @@ class QuBit_UniversalVariable_Model_Page_Observer {
       $transaction['shipping_cost']   = (float) $order->getShippingAmount();
       $transaction['shipping_method'] = $this->_extractShippingMethod($order);
 
-      //checking for getShippingAddress() otherwise $order->getShippingAddress()->getId() will result in fatal error
-      //if order is all virtual i.e. only gift cards are purchased.
-      if ((method_exists($order,'getShippingAddress') && $order->getShippingAddress())) {
-        $shippingId        = $order->getShippingAddress()->getId();
-        $shippingAddress   = $order->getShippingAddress();
+      // Get addresses
+      $shippingAddress = $order->getShippingAddress();
+      if ($shippingAddress) {
         $transaction['delivery'] = $this->_getAddress($shippingAddress);
-        //TODO: this variable is not being used, discuss and delete it
-        $address           = $this->_getOrderAddress()->load($shippingId);
       }
 
       $billingAddress    = $order->getBillingAddress();
@@ -573,5 +573,5 @@ class QuBit_UniversalVariable_Model_Page_Observer {
 
     return $this;
   }
-
 }
+
